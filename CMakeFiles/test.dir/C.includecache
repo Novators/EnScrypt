@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/adam/workspace/enscrypt/config.h
+
+/home/adam/workspace/enscrypt/enscrypt.h
+stdlib.h
+-
+stdint.h
+-
+config.h
+/home/adam/workspace/enscrypt/config.h
+
+/home/adam/workspace/enscrypt/test.c
+config.h
+/home/adam/workspace/enscrypt/config.h
+stdlib.h
+-
+stdint.h
+-
+stdbool.h
+-
+stdio.h
+-
+string.h
+-
+time.h
+-
+enscrypt.h
+/home/adam/workspace/enscrypt/enscrypt.h
+

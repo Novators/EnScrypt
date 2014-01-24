@@ -1,0 +1,7 @@
+enscrypt.kdev4
+config.h
+.kdev4
+CMakeCache.txt
+Makefile
+build
+cmake_install.cmake
