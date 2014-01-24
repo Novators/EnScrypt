@@ -1,0 +1,4 @@
+[Project]
+Name=libenscrypt
+Manager=KDevCMakeManager
+VersionControl=kdevgit
