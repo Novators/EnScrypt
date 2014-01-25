@@ -29,7 +29,7 @@ EnScrypt uses the [CMake](http://www.cmake.org/) build system.  CMake will creat
 
 ```
 $ git clone https://github.com/Novators/EnScrypt.git
-$ cd enscrypt
+$ cd EnScrypt
 $ cmake .
 $ make
 (optional) $ make check
