@@ -2,7 +2,7 @@
 @mainpage EnScrypt
 @version @enscrypt_version@
 @author Adam Comley
-@details EnScrypt is an Acceleration-resistant password hashing library based on the memory-hard PBKDF Scrypt.
+@details EnScrypt is an acceleration-resistant password hashing library and utility based on the memory-hard PBKDF Scrypt.
 
 Based on:
 
