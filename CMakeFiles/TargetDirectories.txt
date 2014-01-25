@@ -1,2 +1,0 @@
-/home/adam/workspace/enscrypt/CMakeFiles/enscrypt.dir
-/home/adam/workspace/enscrypt/CMakeFiles/test.dir

@@ -49,7 +49,6 @@ bool test_enscrypt()
 	if( memcmp( result, "a8ea62a6e1bfd20e4275011595307aa302645c1801600ef5cd79bf9d884d911c", 64 ) != 0 ) {
 		return false;
 	}
-	return true;
 	elapsed = enscrypt( buf, "", NULL, 100, progress );
 	hexify( result, buf );
 	printf( "\n\"\", NULL, 100 (%d ms)\n%s\n\n", elapsed, result );

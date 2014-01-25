@@ -24,6 +24,11 @@ set(LIBSRC enscrypt.c realtime.c)
 add_library(enscrypt SHARED ${LIBSRC})
 target_link_libraries(enscrypt ${LIBS})
 
+add_executable(enscrypt_bin enscrypt_bin.c)
+target_link_libraries(enscrypt_bin enscrypt)
+add_dependencies(enscrypt_bin enscrypt)
+set_target_properties(enscrypt_bin PROPERTIES OUTPUT_NAME enscrypt)
+
 add_executable(test test.c)
 target_link_libraries(test enscrypt)
 add_dependencies(test enscrypt)

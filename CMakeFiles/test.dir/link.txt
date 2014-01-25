@@ -1,1 +1,0 @@
-/usr/bin/gcc  -Wall -fvisibility=hidden -g    CMakeFiles/test.dir/test.c.o  -o test -rdynamic libenscrypt.so -lrt -lm -Wl,-rpath,/home/adam/workspace/enscrypt 

@@ -1,1 +1,0 @@
-/usr/bin/gcc  -fPIC -Wall -fvisibility=hidden -g   -shared -Wl,-soname,libenscrypt.so -o libenscrypt.so CMakeFiles/enscrypt.dir/enscrypt.c.o CMakeFiles/enscrypt.dir/realtime.c.o -lrt -lm 
