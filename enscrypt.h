@@ -81,7 +81,7 @@ void enscrypt_scrypt(const unsigned char *password, size_t password_len, const u
  * @param salt 32 byte buffer containing the salt, or NULL.
  * @param iterations Number of iterations; must be > 0.
  * @param cb_ptr Pointer to an enscrypt_progress_fn, or NULL.
- * @return Execution time (in milliseconds).
+ * @return Execution time (in milliseconds) or -1 on error.
  **/
 int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr );
 
@@ -93,7 +93,7 @@ int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iteratio
  * @param salt 32 byte buffer containing the salt, or NULL.
  * @param millis Milliseconds to compute.  Must be > 0.
  * @param cb_ptr Pointer to an enscrypt_progress_fn, or NULL.
- * @return Number of iterations performed.
+ * @return Number of iterations performed or -1 on error.
  **/
 int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr );
 
