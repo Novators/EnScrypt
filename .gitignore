@@ -9,3 +9,7 @@ test
 enscrypt
 libenscrypt.so
 CMakeFiles
+Testing
+CTestTestfile.cmake
+install_manifest.txt
+enscrypt_test
