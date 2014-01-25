@@ -8,10 +8,10 @@
 #include <stdbool.h>
 
 #include "enscrypt.h"
-#include "code/scrypt-jane-portable.h"
-#include "code/scrypt-jane-hash.h"
-#include "code/scrypt-jane-romix.h"
-#include "code/scrypt-jane-test-vectors.h"
+#include "scrypt/scrypt-jane-portable.h"
+#include "scrypt/scrypt-jane-hash.h"
+#include "scrypt/scrypt-jane-romix.h"
+#include "scrypt/scrypt-jane-test-vectors.h"
 
 #define scrypt_maxNfactor 30  /* (1 << (30 + 1)) = ~2 billion */
 #if (SCRYPT_BLOCK_BYTES == 64)

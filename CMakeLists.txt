@@ -33,11 +33,13 @@ set_target_properties(enscrypt_bin PROPERTIES OUTPUT_NAME enscrypt)
 
 ########## Test Target ##########
 enable_testing()
-set(CMAKE_CTEST_COMMAND ctest -V)
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+
 add_executable(enscrypt_test EXCLUDE_FROM_ALL test.c)
 target_link_libraries(enscrypt_test enscrypt)
 add_dependencies(enscrypt_test enscrypt)
+
+set(CMAKE_CTEST_COMMAND ctest -V)
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 add_test(test_enscrypt enscrypt_test)
 add_dependencies(check enscrypt_test)
 
