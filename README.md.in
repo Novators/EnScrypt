@@ -2,7 +2,7 @@
 
 EnScrypt is an acceleration-resistant password hashing library and utility based on the memory-hard PBKDF Scrypt.
 
-# Based On
+## Based On
 
 * SQRL 
     * Author: Steve Gibson
@@ -21,10 +21,10 @@ EnScrypt is an acceleration-resistant password hashing library and utility based
     * License: Creative Commons Attribution 3.0 Unported License (http://creativecommons.org/licenses/by/3.0/deed.en_US)
     * This is used for accurate cross-platform timing.
 
-# Supported Platforms
+## Supported Platforms
 This implementation is intended to work on multiple platforms.  Currently, has only been tested on Linux (Ubuntu 12.04).
 
-# Building and Installing
+## Building and Installing
 EnScrypt uses the [CMake](http://www.cmake.org/) build system.  CMake will create project files for your target platform.  Assuming everything works correctly, on a linux system:
 
 ```
@@ -36,7 +36,7 @@ make check
 sudo make install
 ```
 
-# Using the command line utility
+## Using the command line utility
 The command line utility is substantially similar to Steve Gibson's [reference implementation](https://www.grc.com/sqrl/scrypt.htm).  Normal use is identical:
 
 ```
@@ -52,10 +52,10 @@ All arguments are optional, and order is arbitrary.  This implementation adds th
 * -h: Help.  Displays usage information.
 * password: any string not matching the above arguments.
 
-# Using the library
+## Using the library
 Documentation is available in the enscrypt.h header, or in HTML format by running ```make doc```.  
 
-## Basic Use
+### Basic Use
 Typically, you'll just need two functions from the library, enscrypt() and enscrypt_ms().  They look like this:
 
 ```
@@ -102,7 +102,7 @@ int main()
 }
 ```
 
-## Advanced use
+### Advanced use
 See the documentation in enscrypt.h for more details on each:
 
 * enscrypt_progress_fn - progress callback prototype.
@@ -111,7 +111,7 @@ See the documentation in enscrypt.h for more details on each:
 * enscrypt_get_real_time() - Get a value representing execution time.
 * enscrypt_set_fatal_error() - Set a function to call in the event of an un-recoverable error.
 
-# License
+## License
 This work is released under the MIT License as follows:
 
 Copyright (c) 2014 Adam Comley
