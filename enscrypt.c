@@ -29,6 +29,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "config.h"
 #include "enscrypt.h"
 #include "scrypt/scrypt-jane-portable.h"
 #include "scrypt/scrypt-jane-hash.h"
