@@ -1,70 +1,74 @@
-# EnScrypt 1.1.1
+/**
+@mainpage EnScrypt
+@version @enscrypt_version@
+@author Adam Comley
+@details EnScrypt is an Acceleration-resistant password hashing library based on the memory-hard PBKDF Scrypt.
 
-EnScrypt is an Acceleration-resistant password hashing library based on the memory-hard PBKDF Scrypt.
+Based on:
 
-# Based On
+- SQRL 
+  - Author: Steve Gibson
+  - Site: https://www.grc.com/
+  - Link: https://www.grc.com/sqrl/scrypt.htm
+  - This software (EnScrypt) is an implementation of the EnScrypt algorithm that Steve designed for SQRL.
 
-* SQRL 
-    * Author: Steve Gibson
-    * [Author's Site](https://www.grc.com/)
-    * [Algorithm Detail](https://www.grc.com/sqrl/scrypt.htm)
-    * This software (EnScrypt) is an implementation of the EnScrypt algorithm that Steve designed for SQRL.
-* scrypt-jane 
-    * Author: Andrew M
-    * [Source](https://github.com/floodyberry/scrypt-jane)
-    * License: Public Domain, or MIT
-    * The heavy lifting of the EnScrypt algorithm is handled by scrypt-jane, with minor modifications.
-* getRealTime.c 
-    * Author: David Robert Nadeau
-    * [Author's Site](http://NadeauSoftware.com/)
-    * [Article](http://nadeausoftware.com/articles/2012/04/c_c_tip_how_measure_elapsed_real_time_benchmarking)
-    * License: Creative Commons Attribution 3.0 Unported License (http://creativecommons.org/licenses/by/3.0/deed.en_US)
-    * This is used for accurate cross-platform timing.
+- scrypt-jane 
+  - Author: Andrew M
+  - Link: https://github.com/floodyberry/scrypt-jane
+  - License: Public Domain, or MIT
+  - The heavy lifting of the EnScrypt algorithm is handled by scrypt-jane, with minor modifications.
 
-# Supported Platforms
+- getRealTime.c 
+  - Author: David Robert Nadeau
+  - Site: http://NadeauSoftware.com/
+  - Link: http://nadeausoftware.com/articles/2012/04/c_c_tip_how_measure_elapsed_real_time_benchmarking
+  - License: Creative Commons Attribution 3.0 Unported License (http://creativecommons.org/licenses/by/3.0/deed.en_US)
+  - This is used for accurate cross-platform timing.
+
+@section platforms Supported Platforms
 This implementation is intended to work on multiple platforms.  Currently, has only been tested on Linux (Ubuntu 12.04).
-
-# Building and Installing
+  
+@section installing Building and Installing
 EnScrypt uses the [CMake](http://www.cmake.org/) build system.  CMake will create project files for your target platform.  Assuming everything works correctly, on a linux system:
 
-```
+@code
 (download and extract source)
 cd enscrypt
 cmake .
 make
 make check
 sudo make install
-```
+@endcode
 
-# Using the command line utility
+@section utility Using the command line utility
 The command line utility is substantially similar to Steve Gibson's [reference implementation](https://www.grc.com/sqrl/scrypt.htm).  Normal use is identical:
 
-```
+@code
 enscrypt [-q] [password] [salt] [iteration_count | duration]
-```
+@endcode
 
 All arguments are optional, and order is arbitrary.  This implementation adds the "-q" and "-h" options.
 
-* duration: An integer + 's' or 'S'.  For example, "5s" == 5 seconds.
-* iteration_count: An integer + 'i' or 'I'.  For example, "100i" == 100 iterations.
-* salt: a 64 character hex string representing a 32 byte salt.  Allowed characters are 0-9, a-f, and A-F.
-* -q: Quiet.  Suppresses all output except the computed output key.
-* -h: Help.  Displays usage information.
-* password: any string not matching the above arguments.
+- duration: An integer + 's' or 'S'.  For example, "5s" == 5 seconds.
+- iteration_count: An integer + 'i' or 'I'.  For example, "100i" == 100 iterations.
+- salt: a 64 character hex string representing a 32 byte salt.  Allowed characters are 0-9, a-f, and A-F.
+- -q: Quiet.  Suppresses all output except the computed output key.
+- -h: Help.  Displays usage information.
+- password: any string not matching the above arguments.
 
-# Using the library
+@section library Using the library
 Documentation is available in the enscrypt.h header, or in HTML format by running ```make doc```.  
 
-## Basic Use
+@subsection basiclib Basic Use
 Typically, you'll just need two functions from the library, enscrypt() and enscrypt_ms().  They look like this:
 
-```
+@code
 int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr );
 int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr );
-```
+@endcode
 
 To run 100 iterations:
-```
+@code
 int main()
 {
   int time_elapsed;
@@ -73,10 +77,10 @@ int main()
   
   time_elapsed = enscrypt( buf, "password", salt, 100, NULL );
 }
-```
+@endcode
 
 Or, to run for 5 seconds:
-```
+@code
 int main()
 {
   int iteration_count;
@@ -85,10 +89,10 @@ int main()
   
   iteration_count = enscrypt_ms( buf, "password", salt, 5000, NULL );
 }
-```
+@endcode
 
 To use a callback function to monitor progress:
-```
+@code
 void progress_fn( int progress )
 {
   printf( "%d%%\n", progress );
@@ -100,18 +104,20 @@ int main()
   
   enscrypt( buf, NULL, NULL, 100, progress_fn );
 }
-```
+@endcode
 
-## Advanced use
-See the documentation in enscrypt.h for more details on each:
-
-* enscrypt_progress_fn - progress callback prototype.
-* enscrypt_fatal_errorfn - fatal error function prototype.
-* enscrypt_scrypt() - The original Scrypt PBKDF.
-* enscrypt_get_real_time() - Get a value representing execution time.
-* enscrypt_set_fatal_error() - Set a function to call in the event of an un-recoverable error.
-
-# License
+@subsection advancedlib Advanced use
+  - Function Prototypes:
+    - ::enscrypt_progress_fn progress callback prototype.
+    - ::enscrypt_fatal_errorfn fatal error function prototype.
+  - Functions:
+    - ::enscrypt() Iteration based EnScrypt
+    - ::enscrypt_ms() Time based EnScrypt
+    - ::enscrypt_scrypt() The original Scrypt PBKDF.
+    - ::enscrypt_get_real_time() Get a value representing execution time.
+    - ::enscrypt_set_fatal_error() Set a function to call in the event of an un-recoverable error.
+    
+@section license License
 This work is released under the MIT License as follows:
 
 Copyright (c) 2014 Adam Comley
@@ -133,3 +139,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+*/

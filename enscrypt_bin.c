@@ -144,15 +144,15 @@ int main( int argc, char *argv[] )
 		printf( "  Progress: [" );
 		fflush( stdout );
 	}
-	startTime = getRealTime();
+	startTime = enscrypt_get_real_time();
 	if( iterations ) {
 		enscrypt( result, password, salt, iterations, progress );
 	} else if( duration ) {
-		iterations = enscrypt_millis( result, password, salt, duration * 1000, progress );
+		iterations = enscrypt_ms( result, password, salt, duration * 1000, progress );
 	} else {
 		enscrypt( result, password, salt, 1, progress );
 	}
-	endTime = getRealTime();
+	endTime = enscrypt_get_real_time();
 	elapsed = endTime - startTime;
 	hexify( str, result );
 	

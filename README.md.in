@@ -1,4 +1,4 @@
-# EnScrypt 1.1.1
+# EnScrypt @enscrypt_version@
 
 EnScrypt is an Acceleration-resistant password hashing library based on the memory-hard PBKDF Scrypt.
 
