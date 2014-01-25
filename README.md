@@ -28,12 +28,12 @@ This implementation is intended to work on multiple platforms.  Currently, has o
 EnScrypt uses the [CMake](http://www.cmake.org/) build system.  CMake will create project files for your target platform.  Assuming everything works correctly, on a linux system:
 
 ```
-(download and extract source)
-cd enscrypt
-cmake .
-make
-make check
-sudo make install
+$ git clone https://github.com/Novators/EnScrypt.git
+$ cd enscrypt
+$ cmake .
+$ make
+(optional) $ make check
+$ sudo make install
 ```
 
 ## Using the command line utility
@@ -65,6 +65,8 @@ int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int mill
 
 To run 100 iterations:
 ```
+#include <enscrypt.h>
+
 int main()
 {
   int time_elapsed;
@@ -77,6 +79,8 @@ int main()
 
 Or, to run for 5 seconds:
 ```
+#include <enscrypt.h>
+
 int main()
 {
   int iteration_count;
@@ -89,6 +93,8 @@ int main()
 
 To use a callback function to monitor progress:
 ```
+#include <enscrypt.h>
+
 void progress_fn( int progress )
 {
   printf( "%d%%\n", progress );
