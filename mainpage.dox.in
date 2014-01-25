@@ -57,7 +57,7 @@ All arguments are optional, and order is arbitrary.  This implementation adds th
 - password: any string not matching the above arguments.
 
 @section library Using the library
-Documentation is available in the enscrypt.h header, or in HTML format by running ```make doc```.  
+Documentation is available in the enscrypt.h header, or in HTML in the doc directory.
 
 @subsection basiclib Basic Use
 Typically, you'll just need two functions from the library, enscrypt() and enscrypt_ms().  They look like this:
