@@ -18,12 +18,25 @@ const char decTable[10] = "0123456789";
 
 char version[] =
 "EnScrypt password hashing utility \n\
-Version 1.1 (compatible) \n\
-Usage: enscrypt [password] [salt] [iteration count | duration] \n\
-For detailed information: enscrypt -h";
+Version 1.1.1\n\
+Usage: enscrypt [-q] [password] [salt] [iteration count] [duration] \n\
+Help:  enscrypt -h";
 
-char help[] =
-"help";
+char help[] = "\
+Option            Description\n\
+----------------  -------------------------------------------------------\n\
+duration          An integer + 's' or 'S'.  \n\
+                  For example, \"5s\" == 5 seconds.\n\
+iteration_count   An integer + 'i' or 'I'.  \n\
+                  For example, \"100i\" == 100 iterations.\n\
+                  If both are included, iteration_count\n\
+                  takes precedence over duration.\n\
+salt              A 64 character hex string representing a 32 byte salt.  \n\
+                  Allowed characters are 0-9, a-f, and A-F.\n\
+-q                Quiet.  Suppresses all output except the key.\n\
+-h                Help.  Displays usage information.\n\
+password          Any string not matching the above arguments.\n\n\
+All arguments are optional, and order is arbitrary.";
 
 void progress( int p )
 {
