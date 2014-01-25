@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.6)
 set(enscrypt_version 1.1.1)
 
 ########## Configuration ##########
-#set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Debug)
 
 if(UNIX)
 		set(LIBS ${LIBS} m rt)
