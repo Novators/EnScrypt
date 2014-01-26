@@ -1,0 +1,8 @@
+* Version 1.1.1
+  * First Release
+
+* Version 1.1 build 2
+  * Supressed CMake error if Doxygen not found
+  * Added build numbers
+  * Set enscrypt_context variables to NULL after freeing memory
+  * Added sanity checks to enscrypt_bin

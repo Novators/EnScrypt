@@ -1,6 +1,9 @@
 #ifndef CONFIG_H_INCLUDED
 #define CONFIG_H_INCLUDED
 
+#define ENSCRYPT_VERSION "@enscrypt_version@"
+#define ENSCRYPT_BUILD @enscrypt_build@
+
 #cmakedefine UNIX
 #cmakedefine WIN32
 #cmakedefine CYGWIN

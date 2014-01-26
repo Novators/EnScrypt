@@ -229,10 +229,12 @@ enscrypt_end( enscrypt_context *ctx, uint8_t *buf )
 		if( ctx->password ) {
 			scrypt_ensure_zero( ctx->password, ctx->password_len );
 			free( ctx->password );
+			ctx->password = NULL;
 			ctx->password_len = 0;
 		}
 		if( ctx->salt ) {
 			free( ctx->salt );
+			ctx->salt = NULL;
 			ctx->salt_len = 0;
 		}
 		if( ctx->YX.mem ) {
@@ -248,6 +250,7 @@ enscrypt_end( enscrypt_context *ctx, uint8_t *buf )
 			}
 			scrypt_ensure_zero( ctx->out, 32 );
 			free( ctx->out );
+			ctx->out = NULL;
 		}
 	}
 }

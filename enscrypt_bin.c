@@ -31,31 +31,33 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include "config.h"
 #include "enscrypt.h"
+
 
 long duration = 0;
 long iterations = 0;
 uint8_t *salt = NULL;
 char *password = NULL;
-bool needHelp = false;
+bool showHelp = false;
 bool verbose = true;
 int nextProgress = 2;
 
 const char hexTable[32] = "0123456789abcdef0123456789ABCDEF";
 const char decTable[10] = "0123456789";
 
-char version[] =
-"EnScrypt password hashing utility \n\
-Version 1.1.1\n\
-Usage: enscrypt [-q] [password] [salt] [iteration count] [duration] \n\
-Help:  enscrypt -h";
+#define VERSION_TEMPLATE "\
+  EnScrypt: %s build %d\n"
 
 char help[] = "\
+     Usage: enscrypt [-q] [password] [salt] [iteration count] [duration] \n\
+            enscrypt -h\n\
+\n\
 Option            Description\n\
 ----------------  -------------------------------------------------------\n\
-duration          An integer + 's' or 'S'.  \n\
-                  For example, \"5s\" == 5 seconds.\n\
-iteration_count   An integer + 'i' or 'I'.  \n\
+duration          An integer (1..9999) + 's' or 'S'.  \n\
+                  For example, \"7s\" == 7 seconds.\n\
+iteration_count   An integer (1..9999) + 'i' or 'I'.  \n\
                   For example, \"100i\" == 100 iterations.\n\
                   If both are included, iteration_count\n\
                   takes precedence over duration.\n\
@@ -121,30 +123,29 @@ int main( int argc, char *argv[] )
 			salt = malloc( 32 );
 			unhexify( salt, argv[i] );
 			continue;
-		}
-		if( j > 1 ) {
-			c = argv[i][j-1];
-			switch( c ) {
-				case 's':
-				case 'S':
-					duration = strtol( argv[i], &(argv[i]) + j - 1, 10 );
+		} else if( j > 1 ) {
+			if( strspn( argv[i], decTable ) == j - 1 ) {
+				c = argv[i][j-1];
+				if( c == 's' || c == 'S' ) {
+					if( iterations == 0 ) {
+						duration = (abs( strtol( argv[i], NULL, 10 ))) % 10000;
+					}
 					continue;
-				case 'i':
-				case 'I':
-					iterations = strtol( argv[i], &(argv[i]) + j - 1, 10 );
+				} else if( c == 'i' || c == 'I' ) {
+					iterations = (abs( strtol( argv[i], NULL, 10 ))) % 10000;
+					if( duration ) duration = 0;
 					continue;
+				}
 			}
 			if( argv[i][0] == '-' ) {
+				c = argv[i][1];
 				if( j == 2 ) {
-					switch( argv[i][1] ) {
-						case 'h':
-						case 'H':
-							needHelp = true;
-							continue;
-						case 'q':
-						case 'Q':
-							verbose = false;
-							continue;
+					if( c == 'h' || c == 'H' ) {
+						showHelp = true;
+						continue;
+					} else if( c == 'q' || c == 'Q' ) {
+						verbose = false;
+						continue;
 					}
 				}
 			}
@@ -153,12 +154,12 @@ int main( int argc, char *argv[] )
 		password = malloc( strlen( argv[i] ) + 1 );
 		strcpy( password, argv[i] );
 	}
-	
+
 	if( verbose ) {
-		printf( "%s\n\n", version );
+		printf( VERSION_TEMPLATE, ENSCRYPT_VERSION, ENSCRYPT_BUILD );
 	}
 	
-	if( needHelp ) {
+	if( showHelp ) {
 		printf( "%s\n", help );
 		exit(0);
 	}
@@ -185,13 +186,15 @@ int main( int argc, char *argv[] )
 		printf( "  Progress: [" );
 		fflush( stdout );
 	}
+
 	startTime = enscrypt_get_real_time();
 	if( iterations ) {
 		enscrypt( result, password, salt, iterations, progress );
 	} else if( duration ) {
 		iterations = enscrypt_ms( result, password, salt, duration * 1000, progress );
 	} else {
-		enscrypt( result, password, salt, 1, progress );
+		iterations = 1;
+		enscrypt( result, password, salt, iterations, progress );
 	}
 	endTime = enscrypt_get_real_time();
 	elapsed = endTime - startTime;
