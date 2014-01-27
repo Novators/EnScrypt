@@ -115,6 +115,7 @@ int main( int argc, char *argv[] )
 	char str[65];
 	uint8_t result[32];
 	double startTime, endTime, elapsed;
+	int retVal;
 	
 	for( i = 1; i < argc; i++ ) {
 		j = strlen( argv[i] );
@@ -128,11 +129,11 @@ int main( int argc, char *argv[] )
 				c = argv[i][j-1];
 				if( c == 's' || c == 'S' ) {
 					if( iterations == 0 ) {
-						duration = (abs( strtol( argv[i], NULL, 10 ))) % 10000;
+						duration = ( strtol( argv[i], NULL, 10 )) % 10000;
 					}
 					continue;
 				} else if( c == 'i' || c == 'I' ) {
-					iterations = (abs( strtol( argv[i], NULL, 10 ))) % 10000;
+					iterations = ( strtol( argv[i], NULL, 10 )) % 10000;
 					if( duration ) duration = 0;
 					continue;
 				}
@@ -189,26 +190,32 @@ int main( int argc, char *argv[] )
 
 	startTime = enscrypt_get_real_time();
 	if( iterations ) {
-		enscrypt( result, password, salt, iterations, progress );
+		retVal = enscrypt( result, password, salt, iterations, progress );
 	} else if( duration ) {
-		iterations = enscrypt_ms( result, password, salt, duration * 1000, progress );
+		iterations = retVal = enscrypt_ms( result, password, salt, duration * 1000, progress );
 	} else {
 		iterations = 1;
-		enscrypt( result, password, salt, iterations, progress );
+		retVal = enscrypt( result, password, salt, iterations, progress );
 	}
 	endTime = enscrypt_get_real_time();
 	elapsed = endTime - startTime;
 	hexify( str, result );
 	
-	if( verbose ) {
-		printf( "\n\nOutput Key: %s\n", str );
+	if( retVal > -1 ) {
+		if( verbose ) {
+			printf( "\n\nOutput Key: %s\n", str );
+		} else {
+			printf( "%s\n", str );
+		}
+		if( verbose ) {
+			printf( "Iterations: %ld\n", iterations );
+			printf( "   Elapsed: %.3f seconds\n\n", elapsed );
+		}
 	} else {
-		printf( "%s\n", str );
+		if( verbose ) {
+			printf( "Error running EnScrypt!\n" );
+		}
+		exit(1);
 	}
-	if( verbose ) {
-		printf( "Iterations: %ld\n", iterations );
-		printf( "   Elapsed: %.3f seconds\n\n", elapsed );
-	}
-	
 	exit(0);
 }

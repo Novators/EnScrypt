@@ -1,7 +1,7 @@
 project(enscrypt)
 cmake_minimum_required(VERSION 2.6)
 set(enscrypt_version 1.1)
-set(enscrypt_build 2)
+set(enscrypt_build 3)
 
 ########## Configuration ##########
 set(CMAKE_BUILD_TYPE Release)

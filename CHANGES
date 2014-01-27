@@ -1,8 +1,10 @@
-* Version 1.1.1
-  * First Release
-
-* Version 1.1 build 2
-  * Supressed CMake error if Doxygen not found
-  * Added build numbers
-  * Set enscrypt_context variables to NULL after freeing memory
-  * Added sanity checks to enscrypt_bin
+* Version 1.1
+	* build 1
+	* build 2
+		* Supressed CMake error if Doxygen not found
+		* Added build numbers
+		* Set enscrypt_context variables to NULL after freeing memory
+		* Added sanity checks to enscrypt_bin
+	* build 3
+		* enscrypt() and enscrypt_ms() returns error (-1) instead of defaulting to safe values
+		* enscrypt_bin reports errors

@@ -349,9 +349,9 @@ int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int mill
 	double startTime, elapsed = 0.0;
 	int i = 0, p = 0, lp = -1;
 	
+	if( !buf ) return -1;
+	if( millis < 1 ) return -1;
 	memset( &ctx, 0, sizeof( enscrypt_context ));
-	if( !buf ) return 0;
-	if( millis < 1 ) millis = 1;
 	
 	if( enscrypt_begin( &ctx, passwd, salt )) {
 		startTime = enscrypt_get_real_time();
@@ -380,9 +380,9 @@ int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iteratio
 	double i, startTime, endTime;
 	int p = 0, lp = -1;
 	
+	if( !buf ) return -1;
+	if( iterations < 1 ) return -1;
 	memset( &ctx, 0, sizeof( enscrypt_context ));
-	if( !buf ) return 0;
-	if( iterations < 1 ) iterations = 1;
 	
 	if( enscrypt_begin( &ctx, passwd, salt )) {
 		startTime = enscrypt_get_real_time();
