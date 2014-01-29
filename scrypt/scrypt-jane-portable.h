@@ -127,8 +127,12 @@
 		#define INLINE inline
 	#endif
 	#undef FASTCALL
-	#if (COMPILER_GCC >= 30400)
-		#define FASTCALL __attribute__((fastcall))
+	#ifndef __arm__
+		#if (COMPILER_GCC >= 30400)
+			#define FASTCALL __attribute__((fastcall))
+		#else
+			#define FASTCALL
+		#endif
 	#else
 		#define FASTCALL
 	#endif
@@ -136,6 +140,7 @@
 	#define CDECL __attribute__((cdecl))
 	#undef STDCALL
 	#define STDCALL __attribute__((stdcall))
+	#undef ALIGN
 	#define ALIGN(n) __attribute__((aligned(n)))
 	#include <stdint.h>
 #endif
@@ -167,6 +172,10 @@
 	#define CPU_X86 300
 #elif defined(__ia64__) || defined(_IA64) || defined(__IA64__) || defined(_M_IA64) || defined(__ia64)
 	#define CPU_IA64
+#endif
+
+#if defined(__arm__)
+	#define CPU_ARM
 #endif
 
 #if defined(__sparc__) || defined(__sparc) || defined(__sparcv9)
@@ -300,7 +309,11 @@ scrypt_ensure_zero(void *p, size_t len) {
 #endif
 }
 
-#include "scrypt-jane-portable-x86.h"
+#if defined(CPU_ARM)
+	#include "scrypt-jane-portable-arm.h"
+#else
+	#include "scrypt-jane-portable-x86.h"
+#endif
 
 #if !defined(asm_calling_convention)
 #define asm_calling_convention

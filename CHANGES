@@ -8,3 +8,9 @@
 	* build 3
 		* enscrypt() and enscrypt_ms() returns error (-1) instead of defaulting to safe values
 		* enscrypt_bin reports errors
+	* build 4
+		* some restructuring
+		* basic android support
+	* build 5
+		* major restructuring
+		* Android Support (Though not optimized yet)

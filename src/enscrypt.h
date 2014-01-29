@@ -27,6 +27,10 @@
 #ifndef ENSCRYPT_H
 #define ENSCRYPT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -119,5 +123,9 @@ int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iteratio
  * @return Number of iterations performed or -1 on error.
  **/
 int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ENSCRYPT_H */

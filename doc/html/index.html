@@ -28,7 +28,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">EnScrypt
-   &#160;<span id="projectnumber">1.1</span>
+   &#160;<span id="projectnumber">1.1build5</span>
    </div>
    <div id="projectbrief">Scrypt based password hashing</div>
   </td>
@@ -72,7 +72,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">EnScrypt </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><dl class="version"><dt><b>Version:</b></dt><dd>1.1 build 3 </dd></dl>
+<div class="textblock"><dl class="version"><dt><b>Version:</b></dt><dd>1.1 build 5 </dd></dl>
 <dl class="author"><dt><b>Author:</b></dt><dd>Adam Comley</dd></dl>
 <p>EnScrypt is an acceleration-resistant password hashing library and utility based on the memory-hard PBKDF Scrypt.</p>
 <p>Based on:</p>
@@ -106,19 +106,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </ul>
 <h2><a class="anchor" id="platforms"></a>
 Supported Platforms</h2>
-<p>This implementation is intended to work on multiple platforms. Currently, has only been tested on Linux (Ubuntu 12.04).</p>
+<p>This implementation is intended to work on multiple platforms. Tested platforms include:</p>
+<ul>
+<li>Linux (Ubuntu 32 and 64 bit)</li>
+<li>Android (ARM based only)</li>
+</ul>
+<p>In theory, it will run on Windows, OSX, and iOS with minimal work. I can't test them, however.</p>
 <h2><a class="anchor" id="installing"></a>
 Building and Installing</h2>
 <p>EnScrypt uses the [CMake](<a href="http://www.cmake.org/">http://www.cmake.org/</a>) build system. CMake will create project files for your target platform. Assuming everything works correctly, on a linux system:</p>
 <div class="fragment"><pre class="fragment">$ git clone https:<span class="comment">//github.com/Novators/EnScrypt.git</span>
 $ cd EnScrypt
-$ cmake .
+</pre></div><p>If you are building for Android, you'll need the NDK. CMake looks for a standalone toolchain in EnScrypt/toolchain/arm. Assuming your NDK is installed at /opt/android-ndk:</p>
+<div class="fragment"><pre class="fragment">$ mkdir toolchain
+$ /opt/android-ndk/build/tools/make-standalone-toolchain.sh --platform=android-5 --install-dir=toolchain/arm
+</pre></div><p>Now it's time to build. The following will build for all available architectures:</p>
+<div class="fragment"><pre class="fragment">$ cmake .
 $ make
-(optional) $ make check
-$ sudo make install
-</pre></div><h2><a class="anchor" id="utility"></a>
+</pre></div><p>Now look in the build directory to find your libraries, headers, and executables.</p>
+<h2><a class="anchor" id="utility"></a>
 Using the command line utility</h2>
-<p>The command line utility is substantially similar to Steve Gibson's [reference implementation](<a href="https://www.grc.com/sqrl/scrypt.htm">https://www.grc.com/sqrl/scrypt.htm</a>). Normal use is identical:</p>
+<p>The command line utility is substantially similar to Steve Gibson's [reference implementation](<a href="https://www.grc.com/sqrl/scrypt.htm">https://www.grc.com/sqrl/scrypt.htm</a>). Normal use is almost identical:</p>
 <div class="fragment"><pre class="fragment"><a class="code" href="enscrypt_8h.html#ae4537a4b0eebfa06906fa34a0788bdbd" title="Iteration based enscrypt.">enscrypt</a> [-q] [password] [salt] [iteration_count | duration]
 </pre></div><p>All arguments are optional, and order is arbitrary. This implementation adds the "-q" and "-h" options.</p>
 <ul>
