@@ -51,7 +51,9 @@ typedef uint32_t scrypt_mix_word_t;
 #if !defined(SCRYPT_CHOOSE_COMPILETIME)
 static scrypt_ROMixfn
 scrypt_getROMix(void) {
+#ifndef __arm__
 	size_t cpuflags = detect_cpu();
+#endif
 
 #if defined(SCRYPT_SALSA_XOP)
 	if (cpuflags & cpu_xop)
@@ -109,8 +111,11 @@ scrypt_test_mix(void) {
 	};
 
 	int ret = 1;
+#ifndef __arm__
 	size_t cpuflags = detect_cpu();
-
+#endif
+	
+	
 #if defined(SCRYPT_SALSA_XOP)
 	if (cpuflags & cpu_xop)
 		ret &= scrypt_test_mix_instance(scrypt_ChunkMix_xop, salsa_core_tangle_sse2, salsa_core_tangle_sse2, expected);

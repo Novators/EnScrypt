@@ -15,3 +15,5 @@ install_manifest.txt
 enscrypt_test
 Doxyfile
 mainpage.dox
+android-toolchain
+toolchain/*

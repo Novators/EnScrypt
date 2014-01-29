@@ -1,4 +1,4 @@
-# EnScrypt 1.1 build 3
+# EnScrypt 1.1 build 5
 
 EnScrypt is an acceleration-resistant password hashing library and utility based on the memory-hard PBKDF Scrypt.
 
@@ -22,7 +22,14 @@ EnScrypt is an acceleration-resistant password hashing library and utility based
     * This is used for accurate cross-platform timing.
 
 ## Supported Platforms
-This implementation is intended to work on multiple platforms.  Currently, has only been tested on Linux (Ubuntu 12.04).
+This implementation is intended to work on multiple platforms.  Tested platforms include:
+* Linux (Ubuntu 32 and 64 bit)
+* Android (ARM based only)
+
+In theory, it will run on Windows, OSX, and iOS with minimal work.  I can't test them, however.
+
+
+Currently, has only been tested on Linux (Ubuntu 12.04).
 
 ## Building and Installing
 EnScrypt uses the [CMake](http://www.cmake.org/) build system.  CMake will create project files for your target platform.  Assuming everything works correctly, on a linux system:
@@ -30,14 +37,26 @@ EnScrypt uses the [CMake](http://www.cmake.org/) build system.  CMake will creat
 ```
 $ git clone https://github.com/Novators/EnScrypt.git
 $ cd EnScrypt
-$ cmake .
-$ make
-(optional) $ make check
-$ sudo make install
 ```
 
+If you are building for Android, you'll need the NDK.  CMake looks for a standalone toolchain in ```EnScrypt/toolchain/arm```.  Assuming your NDK is installed at ```/opt/android-ndk```:
+
+```
+$ mkdir toolchain
+$ /opt/android-ndk/build/tools/make-standalone-toolchain.sh --platform=android-5 --install-dir=toolchain/arm
+```
+
+Now it's time to build.  The following will build for all available architectures:
+
+```
+$ cmake .
+$ make
+```
+
+Now look in the build directory to find your libraries, headers, and executables.
+
 ## Using the command line utility
-The command line utility is substantially similar to Steve Gibson's [reference implementation](https://www.grc.com/sqrl/scrypt.htm).  Normal use is identical:
+The command line utility is substantially similar to Steve Gibson's [reference implementation](https://www.grc.com/sqrl/scrypt.htm).  Normal use is almost identical:
 
 ```
 enscrypt [-q] [password] [salt] [iteration_count | duration]
