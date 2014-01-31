@@ -189,8 +189,6 @@
 #     [~] libstdc++ and libsupc are removed from explicit link libraries
 # ------------------------------------------------------------------------------
 
-message( "Loading Android (ARM) Toolchain..." )
-
 cmake_minimum_required( VERSION 2.6.3 )
 
 if( DEFINED CMAKE_CROSSCOMPILING )

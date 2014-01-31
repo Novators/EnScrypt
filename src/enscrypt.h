@@ -50,8 +50,9 @@ extern "C" {
  * can continue immediately.
  *
  * @param  percent an integer from 0..100 inclusive, indicating percent of operation complete.
+ * @param  data pointer to data for application use (or NULL).
  **/
-typedef void (*enscrypt_progress_fn)(int percent);
+typedef void (*enscrypt_progress_fn)(int percent, void* data);
 
 
 /**
@@ -108,9 +109,10 @@ void enscrypt_scrypt(const unsigned char *password, size_t password_len, const u
  * @param salt 32 byte buffer containing the salt, or NULL.
  * @param iterations Number of iterations; must be > 0.
  * @param cb_ptr Pointer to an enscrypt_progress_fn, or NULL.
+ * @param cb_data Pointer to data to send to callback function.
  * @return Execution time (in milliseconds) or -1 on error.
  **/
-int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr );
+int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr, void* cb_data );
 
 /**
  * @brief Time based enscrypt
@@ -120,9 +122,10 @@ int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iteratio
  * @param salt 32 byte buffer containing the salt, or NULL.
  * @param millis Milliseconds to compute.  Must be > 0.
  * @param cb_ptr Pointer to an enscrypt_progress_fn, or NULL.
+ * @param cb_data Pointer to data to send to callback function.
  * @return Number of iterations performed or -1 on error.
  **/
-int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr );
+int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr, void* cb_data );
 
 #ifdef __cplusplus
 }

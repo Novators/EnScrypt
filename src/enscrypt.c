@@ -343,7 +343,7 @@ enscrypt_iterate( enscrypt_context *ctx ) {
 }
 
 DLL_PUBLIC
-int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr )
+int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr, void *cb_data )
 {
 	enscrypt_context ctx;
 	double startTime, elapsed = 0.0;
@@ -358,7 +358,7 @@ int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int mill
 		while( elapsed < millis ) {
 			if( cb_ptr ) {
 				if( lp != ( p = elapsed / millis * 100 ) ) {
-					(*cb_ptr)( p );
+					(*cb_ptr)( p, cb_data );
 					lp = p;
 				}
 			}
@@ -366,7 +366,7 @@ int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int mill
 			elapsed = (enscrypt_get_real_time() - startTime) * 1000;
 			i++;
 		}
-		if( cb_ptr ) (*cb_ptr)( 100 );
+		if( cb_ptr ) (*cb_ptr)( 100, cb_data );
 		enscrypt_end( &ctx, buf );
 		return i;
 	}
@@ -374,7 +374,7 @@ int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int mill
 }
 
 DLL_PUBLIC
-int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr)
+int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr, void *cb_data )
 {
 	enscrypt_context ctx;
 	double i, startTime, endTime;
@@ -389,13 +389,13 @@ int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iteratio
 		for( i = 0; i < iterations; i++ ) {
 			if( cb_ptr ) {
 				if( lp != (p= i / iterations * 100) ) {
-					(*cb_ptr)( p );
+					(*cb_ptr)( p, cb_data );
 					lp = p;
 				}
 			}
 			enscrypt_iterate( &ctx );
 		}
-		if( cb_ptr ) (*cb_ptr)( 100 );
+		if( cb_ptr ) (*cb_ptr)( 100, cb_data );
 		endTime = enscrypt_get_real_time() - startTime;
 		enscrypt_end( &ctx, buf );
 		return (int)(endTime * 1000);

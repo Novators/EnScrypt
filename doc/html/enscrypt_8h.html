@@ -28,7 +28,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">EnScrypt
-   &#160;<span id="projectnumber">1.1build5</span>
+   &#160;<span id="projectnumber">1.1build6</span>
    </div>
    <div id="projectbrief">Scrypt based password hashing</div>
   </td>
@@ -86,8 +86,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#a12863e1e77d11979bcecfa2fc807d3b1">enscrypt_progress_fn</a> )(int percent)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Progress callback prototype.  <a href="#a12863e1e77d11979bcecfa2fc807d3b1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#a4ff82700c482785d2920cef6c605ff0a">enscrypt_progress_fn</a> )(int percent, void *data)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Progress callback prototype.  <a href="#a4ff82700c482785d2920cef6c605ff0a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#aeee2eb12c17d0e6f663138fd670b6096">enscrypt_fatal_errorfn</a> )(const char *msg)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Fatal Error function prototype.  <a href="#aeee2eb12c17d0e6f663138fd670b6096"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
@@ -98,10 +98,10 @@ Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a value representing execution time.  <a href="#a996d6e7d162d0b1b6e505f617c4734b1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#aa051f6dd8852f0ac00f7857612d751fe">enscrypt_scrypt</a> (const unsigned char *password, size_t password_len, const unsigned char *salt, size_t salt_len, unsigned char Nfactor, unsigned char rfactor, unsigned char pfactor, unsigned char *out, size_t bytes)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The original Scrypt PBKDF.  <a href="#aa051f6dd8852f0ac00f7857612d751fe"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#ae4537a4b0eebfa06906fa34a0788bdbd">enscrypt</a> (uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, <a class="el" href="enscrypt_8h.html#a12863e1e77d11979bcecfa2fc807d3b1">enscrypt_progress_fn</a> cb_ptr)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Iteration based enscrypt.  <a href="#ae4537a4b0eebfa06906fa34a0788bdbd"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#ad0ca037fe7e515165e1f161c5b7e3007">enscrypt_ms</a> (uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, <a class="el" href="enscrypt_8h.html#a12863e1e77d11979bcecfa2fc807d3b1">enscrypt_progress_fn</a> cb_ptr)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Time based enscrypt.  <a href="#ad0ca037fe7e515165e1f161c5b7e3007"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#a26eac647cd1afb26a47e2e57c2b374e3">enscrypt</a> (uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, <a class="el" href="enscrypt_8h.html#a4ff82700c482785d2920cef6c605ff0a">enscrypt_progress_fn</a> cb_ptr, void *cb_data)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Iteration based enscrypt.  <a href="#a26eac647cd1afb26a47e2e57c2b374e3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#a636d6c629744e1573a00258ffe913cab">enscrypt_ms</a> (uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, <a class="el" href="enscrypt_8h.html#a4ff82700c482785d2920cef6c605ff0a">enscrypt_progress_fn</a> cb_ptr, void *cb_data)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Time based enscrypt.  <a href="#a636d6c629744e1573a00258ffe913cab"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>EnScrypt, a Scrypt based password hashing library.</p>
@@ -111,12 +111,12 @@ Functions</h2></td></tr>
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. </p>
 </div><hr/><h2>Typedef Documentation</h2>
-<a class="anchor" id="a12863e1e77d11979bcecfa2fc807d3b1"></a><!-- doxytag: member="enscrypt.h::enscrypt_progress_fn" ref="a12863e1e77d11979bcecfa2fc807d3b1" args=")(int percent)" -->
+<a class="anchor" id="a4ff82700c482785d2920cef6c605ff0a"></a><!-- doxytag: member="enscrypt.h::enscrypt_progress_fn" ref="a4ff82700c482785d2920cef6c605ff0a" args=")(int percent, void *data)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* <a class="el" href="enscrypt_8h.html#a12863e1e77d11979bcecfa2fc807d3b1">enscrypt_progress_fn</a>)(int percent)</td>
+          <td class="memname">typedef void(* <a class="el" href="enscrypt_8h.html#a4ff82700c482785d2920cef6c605ff0a">enscrypt_progress_fn</a>)(int percent, void *data)</td>
         </tr>
       </table>
 </div>
@@ -129,6 +129,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">percent</td><td>an integer from 0..100 inclusive, indicating percent of operation complete. </td></tr>
+    <tr><td class="paramname">data</td><td>pointer to data for application use (or NULL). </td></tr>
   </table>
   </dd>
 </dl>
@@ -289,12 +290,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae4537a4b0eebfa06906fa34a0788bdbd"></a><!-- doxytag: member="enscrypt.h::enscrypt" ref="ae4537a4b0eebfa06906fa34a0788bdbd" args="(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr)" -->
+<a class="anchor" id="a26eac647cd1afb26a47e2e57c2b374e3"></a><!-- doxytag: member="enscrypt.h::enscrypt" ref="a26eac647cd1afb26a47e2e57c2b374e3" args="(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr, void *cb_data)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="enscrypt_8h.html#ae4537a4b0eebfa06906fa34a0788bdbd">enscrypt</a> </td>
+          <td class="memname">int <a class="el" href="enscrypt_8h.html#a26eac647cd1afb26a47e2e57c2b374e3">enscrypt</a> </td>
           <td>(</td>
           <td class="paramtype">uint8_t *&#160;</td>
           <td class="paramname"><em>buf</em>, </td>
@@ -320,8 +321,14 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="enscrypt_8h.html#a12863e1e77d11979bcecfa2fc807d3b1">enscrypt_progress_fn</a>&#160;</td>
-          <td class="paramname"><em>cb_ptr</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="enscrypt_8h.html#a4ff82700c482785d2920cef6c605ff0a">enscrypt_progress_fn</a>&#160;</td>
+          <td class="paramname"><em>cb_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>cb_data</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -340,6 +347,7 @@ Functions</h2></td></tr>
     <tr><td class="paramname">salt</td><td>32 byte buffer containing the salt, or NULL. </td></tr>
     <tr><td class="paramname">iterations</td><td>Number of iterations; must be &gt; 0. </td></tr>
     <tr><td class="paramname">cb_ptr</td><td>Pointer to an enscrypt_progress_fn, or NULL. </td></tr>
+    <tr><td class="paramname">cb_data</td><td>Pointer to data to send to callback function. </td></tr>
   </table>
   </dd>
 </dl>
@@ -347,12 +355,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ad0ca037fe7e515165e1f161c5b7e3007"></a><!-- doxytag: member="enscrypt.h::enscrypt_ms" ref="ad0ca037fe7e515165e1f161c5b7e3007" args="(uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr)" -->
+<a class="anchor" id="a636d6c629744e1573a00258ffe913cab"></a><!-- doxytag: member="enscrypt.h::enscrypt_ms" ref="a636d6c629744e1573a00258ffe913cab" args="(uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr, void *cb_data)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="enscrypt_8h.html#ad0ca037fe7e515165e1f161c5b7e3007">enscrypt_ms</a> </td>
+          <td class="memname">int <a class="el" href="enscrypt_8h.html#a636d6c629744e1573a00258ffe913cab">enscrypt_ms</a> </td>
           <td>(</td>
           <td class="paramtype">uint8_t *&#160;</td>
           <td class="paramname"><em>buf</em>, </td>
@@ -378,8 +386,14 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="enscrypt_8h.html#a12863e1e77d11979bcecfa2fc807d3b1">enscrypt_progress_fn</a>&#160;</td>
-          <td class="paramname"><em>cb_ptr</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="enscrypt_8h.html#a4ff82700c482785d2920cef6c605ff0a">enscrypt_progress_fn</a>&#160;</td>
+          <td class="paramname"><em>cb_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>cb_data</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -398,6 +412,7 @@ Functions</h2></td></tr>
     <tr><td class="paramname">salt</td><td>32 byte buffer containing the salt, or NULL. </td></tr>
     <tr><td class="paramname">millis</td><td>Milliseconds to compute. Must be &gt; 0. </td></tr>
     <tr><td class="paramname">cb_ptr</td><td>Pointer to an enscrypt_progress_fn, or NULL. </td></tr>
+    <tr><td class="paramname">cb_data</td><td>Pointer to data to send to callback function. </td></tr>
   </table>
   </dd>
 </dl>

@@ -13,4 +13,7 @@
 		* basic android support
 	* build 5
 		* major restructuring
-		* Android Support (Though not optimized yet)
+		* ARM Support (Though not optimized yet)
+	* build 6
+		* Android Library
+		* Changed Progress callback's signature

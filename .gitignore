@@ -1,4 +1,4 @@
-enscrypt.kdev4
+EnScrypt.kdev4
 config.h
 .kdev4
 CMakeCache.txt
@@ -17,3 +17,4 @@ Doxyfile
 mainpage.dox
 android-toolchain
 toolchain/*
+clean.sh

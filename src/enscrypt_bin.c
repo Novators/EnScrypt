@@ -46,9 +46,6 @@ int nextProgress = 2;
 const char hexTable[32] = "0123456789abcdef0123456789ABCDEF";
 const char decTable[10] = "0123456789";
 
-#define VERSION_TEMPLATE "\
-  EnScrypt: %s build %d\n"
-
 char help[] = "\
      Usage: enscrypt [-q] [password] [salt] [iteration count] [duration] \n\
             enscrypt -h\n\
@@ -68,7 +65,7 @@ salt              A 64 character hex string representing a 32 byte salt.  \n\
 password          Any string not matching the above arguments.\n\n\
 All arguments are optional, and order is arbitrary.";
 
-void progress( int p )
+void progress( int p, void *cb_data )
 {
 	const char sym[] = "|****";
 	while( p >= nextProgress ) {
@@ -157,7 +154,7 @@ int main( int argc, char *argv[] )
 	}
 
 	if( verbose ) {
-		printf( VERSION_TEMPLATE, ENSCRYPT_VERSION, ENSCRYPT_BUILD );
+		printf( "EnScrypt: %s\n", ENSCRYPT_VERSION );
 	}
 	
 	if( showHelp ) {
@@ -190,12 +187,12 @@ int main( int argc, char *argv[] )
 
 	startTime = enscrypt_get_real_time();
 	if( iterations ) {
-		retVal = enscrypt( result, password, salt, iterations, progress );
+		retVal = enscrypt( result, password, salt, iterations, progress, NULL );
 	} else if( duration ) {
-		iterations = retVal = enscrypt_ms( result, password, salt, duration * 1000, progress );
+		iterations = retVal = enscrypt_ms( result, password, salt, duration * 1000, progress, NULL );
 	} else {
 		iterations = 1;
-		retVal = enscrypt( result, password, salt, iterations, progress );
+		retVal = enscrypt( result, password, salt, iterations, progress, NULL );
 	}
 	endTime = enscrypt_get_real_time();
 	elapsed = endTime - startTime;

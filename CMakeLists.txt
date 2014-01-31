@@ -2,15 +2,14 @@ project(EnScrypt)
 cmake_minimum_required(VERSION 2.6)
 set(enscrypt_version_major 1)
 set(enscrypt_version_minor 1)
-set(enscrypt_build 5)
+set(enscrypt_build 6)
 set(enscrypt_version "${enscrypt_version_major}.${enscrypt_version_minor} build ${enscrypt_build}")
-#set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Debug)
 if(CMAKE_COMPILER_IS_GNUCC)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 endif()
 set(SRCDIR ${CMAKE_SOURCE_DIR}/src)
-
 
 macro(find_substring needle haystack found)
 	set(${found} FALSE)
@@ -22,11 +21,37 @@ macro(find_substring needle haystack found)
 endmacro()
 
 ########## Platform Tests ##########
-set(ARM_ARCHS armeabi armeabi-v7a "armeabi-v7a with NEON" "armeabi-v7a with VFPV3" "armeabi-v6 with VFP")
+find_program(ANT_PROGRAM ant)
+find_program(ANDROID_PROGRAM android)
+find_program(JAR_PROGRAM jar)
+find_program(ZIP_PROGRAM zip)
+
+set(ARM_ARCHS armeabi armeabi-v7a "armeabi-v7a_with_NEON" "armeabi-v7a_with_VFPV3" "armeabi-v6_with_VFP")
 set(ARCHS ${ARM_ARCHS})
 if(UNIX)
 	set(ARCHS ${ARCHS} "linux")
 endif(UNIX)
+
+set(HAVE_ARM_TOOLCHAIN FALSE)
+if(EXISTS ${CMAKE_SOURCE_DIR}/toolchain/arm)
+	set(HAVE_ARM_TOOLCHAIN TRUE)
+	set(arm_toolchain ${CMAKE_SOURCE_DIR}/toolchain/arm)
+endif()
+if(EXISTS ${CMAKE_SOURCE_DIR}/../toolchain/arm)
+	set(HAVE_ARM_TOOLCHAIN TRUE)
+	set(arm_toolchain ${CMAKE_SOURCE_DIR}/../toolchain/arm)
+endif()
+message("-- Detecting ARM Toolchain - " ${HAVE_ARM_TOOLCHAIN})
+
+if(HAVE_ARM_TOOLCHAIN)
+	if(ANT_PROGRAM)
+		if(ANDROID_PROGRAM)
+			set(ARCHS ${ARCHS} android)
+		endif(ANDROID_PROGRAM)
+	endif(ANT_PROGRAM)
+endif(HAVE_ARM_TOOLCHAIN)
+
+
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
 	set(BUILD_meta 1)
@@ -43,18 +68,6 @@ find_substring(ARCH ARM_ARCHS substring_found)
 if(substring_found)
 	set(ARM_PLATFORM TRUE)
 endif(substring_found)
-
-set(HAVE_ARM_TOOLCHAIN FALSE)
-if(EXISTS ${CMAKE_SOURCE_DIR}/toolchain/arm)
-	set(HAVE_ARM_TOOLCHAIN TRUE)
-	set(arm_toolchain ${CMAKE_SOURCE_DIR}/toolchain/arm)
-endif()
-if(EXISTS ${CMAKE_SOURCE_DIR}/../toolchain/arm)
-	set(HAVE_ARM_TOOLCHAIN TRUE)
-	set(arm_toolchain ${CMAKE_SOURCE_DIR}/../toolchain/arm)
-endif()
-message("-- Detecting ARM Toolchain - " ${HAVE_ARM_TOOLCHAIN})
-
 
 ########## Meta Configuration ##########
 if(BUILD_meta)
@@ -88,7 +101,11 @@ if(BUILD_meta)
 			message( "-- Selecting: " ${arch} )
 			set(pr_dir "${CMAKE_SOURCE_DIR}/build/${arch}")
 			file(MAKE_DIRECTORY "${pr_dir}")
-			add_custom_target(${arch} ALL DEPENDS ${pr_dir}/Makefile)
+			if("${arch}" STREQUAL "android")
+				add_custom_target(${arch} ALL DEPENDS ${pr_dir}/Makefile armeabi armeabi-v7a)
+			else()
+				add_custom_target(${arch} ALL DEPENDS ${pr_dir}/Makefile)
+			endif()
 			add_custom_command(
 				TARGET ${arch}
 				PRE_BUILD
@@ -161,27 +178,74 @@ if(BUILD_linux)
 		"${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake_uninstall.cmake")
 endif(BUILD_linux)
 
+if(BUILD_android)
+	project(EnScrypt-${ARCH})
+	set(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
+	set(SRCDIR ${CMAKE_CURRENT_BINARY_DIR}/EnScrypt)
+	
+	set(ANDROID_TARGET "android-19")
+	configure_file("${CMAKE_CURRENT_BINARY_DIR}/../armeabi/libenscrypt.so" ${SRCDIR}/libs/armeabi/libenscrypt.so COPYONLY)
+	configure_file("${CMAKE_CURRENT_BINARY_DIR}/../armeabi-v7a/libenscrypt.so" ${SRCDIR}/libs/armeabi-v7a/libenscrypt.so COPYONLY)
+	configure_file("${CMAKE_SOURCE_DIR}/src/android/Enscrypt.java" ${SRCDIR}/src/com/sqrlauth/enscrypt/Enscrypt.java COPYONLY)
+	configure_file("${CMAKE_SOURCE_DIR}/src/android/AndroidManifest.xml" ${CMAKE_CURRENT_BINARY_DIR}/AndroidManifest.xml COPYONLY)
+	#configure_file("${CMAKE_SOURCE_DIR}/src/android/Android.mk" "${SRCDIR}/jni/Android.mk" COPYONLY)
+	
+	message("ANDROID: " ${ANDROID_PROGRAM})
+	message("ANT: " ${ANT_PROGRAM})
+	
+	add_custom_command(
+		OUTPUT "${SRCDIR}/build.xml"
+		WORKING_DIRECTORY "${SRCDIR}"
+		COMMAND ${ANDROID_PROGRAM} create lib-project --target ${ANDROID_TARGET} --name EnScrypt --path . --package com.sqrlauth.enscrypt 
+		COMMAND cp ../AndroidManifest.xml .
+	)
+
+	add_custom_target(
+		android-lib ALL
+		COMMAND ${ANT_PROGRAM} debug
+		DEPENDS "${SRCDIR}/build.xml"
+		WORKING_DIRECTORY "${SRCDIR}"
+	)
+	
+	if(JAR_PROGRAM)
+		add_custom_command(
+			TARGET android-lib
+			POST_BUILD
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/EnScrypt
+			COMMAND ${JAR_PROGRAM} cf com.sqrlauth.enscrypt.jar -C bin/classes com
+			COMMAND mv com.sqrlauth.enscrypt.jar libs
+		)
+		if(ZIP_PROGRAM)
+			add_custom_command(
+				TARGET android-lib
+				POST_BUILD
+				WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/EnScrypt
+				COMMAND ${ZIP_PROGRAM} -r ../EnScrypt.zip libs
+			)
+		endif(ZIP_PROGRAM)
+	endif(JAR_PROGRAM)
+endif(BUILD_android)
+
 ########## Android-ARM Configuration ##########
 if(ARM_PLATFORM)
 	project(EnScrypt-${ARCH})
 	set(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
 	set(SRCDIR ${CMAKE_SOURCE_DIR}/src)
 	
+	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/toolchain/arm/sysroot/usr/include)
+	
 	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 	
-	#set(LIBS ${LIBS} rt)
 	if(CMAKE_COMPILER_IS_GNUCC)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 	endif(CMAKE_COMPILER_IS_GNUCC)
 	configure_file(${SRCDIR}/enscrypt.h ${CMAKE_CURRENT_BINARY_DIR}/include/enscrypt.h COPYONLY)
 
 	########## Library Target ##########
-	set(LIBSRC ${SRCDIR}/enscrypt.c ${SRCDIR}/realtime.c)
+	set(LIBSRC ${SRCDIR}/enscrypt.c ${SRCDIR}/realtime.c ${SRCDIR}/com_sqrlauth_enscrypt_Enscrypt.c)
 	add_library(enscrypt SHARED ${LIBSRC})
-	target_link_libraries(enscrypt ${LIBS})
-	add_library(enscrypt_static STATIC ${LIBSRC})
-	target_link_libraries(enscrypt_static ${LIBS})
-	set_target_properties(enscrypt_static PROPERTIES OUTPUT_NAME enscrypt)
+	#add_library(enscrypt_static STATIC ${LIBSRC})
+	#set_target_properties(enscrypt_static PROPERTIES OUTPUT_NAME enscrypt)
 endif(ARM_PLATFORM)
