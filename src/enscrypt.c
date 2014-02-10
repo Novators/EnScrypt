@@ -50,7 +50,6 @@
 #include "../scrypt/scrypt-jane-portable.h"
 #include "../scrypt/scrypt-jane-hash.h"
 #include "../scrypt/scrypt-jane-romix.h"
-#include "../scrypt/scrypt-jane-test-vectors.h"
 
 #include <stdio.h>
 //#include <malloc.h>
