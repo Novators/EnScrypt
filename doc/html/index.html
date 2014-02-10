@@ -28,7 +28,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">EnScrypt
-   &#160;<span id="projectnumber">1.1build6</span>
+   &#160;<span id="projectnumber">1.1build7</span>
    </div>
    <div id="projectbrief">Scrypt based password hashing</div>
   </td>
@@ -72,7 +72,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">EnScrypt </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><dl class="version"><dt><b>Version:</b></dt><dd>1.1 build 6 </dd></dl>
+<div class="textblock"><dl class="version"><dt><b>Version:</b></dt><dd>1.1 build 7 </dd></dl>
 <dl class="author"><dt><b>Author:</b></dt><dd>Adam Comley</dd></dl>
 <p>EnScrypt is an acceleration-resistant password hashing library and utility based on the memory-hard PBKDF Scrypt.</p>
 <p>Based on:</p>
@@ -109,22 +109,40 @@ Supported Platforms</h2>
 <p>This implementation is intended to work on multiple platforms. Tested platforms include:</p>
 <ul>
 <li>Linux (Ubuntu 32 and 64 bit)</li>
-<li>Android (ARM based only)</li>
+<li>Android ARM</li>
+<li>Android ARM with NEON (optimized implementation with runtime detection of NEON support and fallback)</li>
 </ul>
-<p>In theory, it will run on Windows, OSX, and iOS with minimal work. I can't test them, however.</p>
+<p>Compiles, but has not been thoroughly tested on:</p>
+<ul>
+<li>Android X86</li>
+<li>Android MIPS</li>
+</ul>
+<p>Planned, but not yet supported:</p>
+<ul>
+<li>Windows</li>
+<li>OSX</li>
+<li>iOS</li>
+</ul>
 <h2><a class="anchor" id="installing"></a>
 Building and Installing</h2>
-<p>EnScrypt uses the [CMake](<a href="http://www.cmake.org/">http://www.cmake.org/</a>) build system. CMake will create project files for your target platform. Assuming everything works correctly, on a linux system:</p>
+<p>EnScrypt uses the [CMake](<a href="http://www.cmake.org/">http://www.cmake.org/</a>) build system. CMake will create project files for your target platform. To build on a linux system:</p>
 <div class="fragment"><pre class="fragment">$ git clone https:<span class="comment">//github.com/Novators/EnScrypt.git</span>
 $ cd EnScrypt
-</pre></div><p>If you are building for Android, you'll need the NDK. CMake looks for a standalone toolchain in EnScrypt/toolchain/arm. Assuming your NDK is installed at /opt/android-ndk:</p>
-<div class="fragment"><pre class="fragment">$ mkdir toolchain
-$ /opt/android-ndk/build/tools/make-standalone-toolchain.sh --platform=android-5 --install-dir=toolchain/arm
+</pre></div><p>If you are building for Android, you'll need the NDK installed (or linked) in ```./ndk```. You must also have 'ant', 'zip', and 'android' available on your system.</p>
+<div class="fragment"><pre class="fragment">$ ln -s /opt/android-ndk-r9c ndk
 </pre></div><p>Now it's time to build. The following will build for all available architectures:</p>
 <div class="fragment"><pre class="fragment">$ cmake .
 $ make
-</pre></div><p>Now look in the build directory to find your libraries, headers, and executables.</p>
-<h2><a class="anchor" id="utility"></a>
+</pre></div><p>Assuming a successful build, you should find the following files interesting:</p>
+<div class="fragment"><pre class="fragment">build/linux/<a class="code" href="enscrypt_8h.html#a26eac647cd1afb26a47e2e57c2b374e3" title="Iteration based enscrypt.">enscrypt</a> -- the command line utility
+build/linux/include/<a class="code" href="enscrypt_8h.html#a26eac647cd1afb26a47e2e57c2b374e3" title="Iteration based enscrypt.">enscrypt</a>.h -- header <span class="keywordflow">for</span> the library
+build/linux/lib/libenscrypt.a -- <span class="keyword">static</span> library
+build/linux/lib/libenscrypt.so -- shared library
+build/android/EnScrypt.zip -- Includes the libraries and a Java <span class="keyword">class </span>to use them.  Import into your Android project&#39;s root to add EnScrypt support.
+</pre></div><p>If you'd like to run the test suite:</p>
+<div class="fragment"><pre class="fragment">$ cd build/linux
+$ make check
+</pre></div><h2><a class="anchor" id="utility"></a>
 Using the command line utility</h2>
 <p>The command line utility is substantially similar to Steve Gibson's [reference implementation](<a href="https://www.grc.com/sqrl/scrypt.htm">https://www.grc.com/sqrl/scrypt.htm</a>). Normal use is almost identical:</p>
 <div class="fragment"><pre class="fragment"><a class="code" href="enscrypt_8h.html#a26eac647cd1afb26a47e2e57c2b374e3" title="Iteration based enscrypt.">enscrypt</a> [-q] [password] [salt] [iteration_count | duration]

@@ -16,5 +16,5 @@ enscrypt_test
 Doxyfile
 mainpage.dox
 android-toolchain
-toolchain/*
 clean.sh
+ndk

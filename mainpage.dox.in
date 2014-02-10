@@ -28,23 +28,31 @@ Based on:
 @section platforms Supported Platforms
 This implementation is intended to work on multiple platforms.  Tested platforms include:
 - Linux (Ubuntu 32 and 64 bit)
-- Android (ARM based only)
+- Android ARM
+- Android ARM with NEON (optimized implementation with runtime detection of NEON support and fallback)
+ 
+Compiles, but has not been thoroughly tested on:
+- Android X86
+- Android MIPS
+ 
+Planned, but not yet supported:
+- Windows
+- OSX
+- iOS
 
-In theory, it will run on Windows, OSX, and iOS with minimal work.  I can't test them, however.
 
 @section installing Building and Installing
-EnScrypt uses the [CMake](http://www.cmake.org/) build system.  CMake will create project files for your target platform.  Assuming everything works correctly, on a linux system:
+EnScrypt uses the [CMake](http://www.cmake.org/) build system.  CMake will create project files for your target platform.  To build on a linux system:
 
 @code
 $ git clone https://github.com/Novators/EnScrypt.git
 $ cd EnScrypt
 @endcode
 
-If you are building for Android, you'll need the NDK.  CMake looks for a standalone toolchain in EnScrypt/toolchain/arm.  Assuming your NDK is installed at /opt/android-ndk:
+If you are building for Android, you'll need the NDK installed (or linked) in ```./ndk```.  You must also have 'ant', 'zip', and 'android' available on your system.
 
 @code
-$ mkdir toolchain
-$ /opt/android-ndk/build/tools/make-standalone-toolchain.sh --platform=android-5 --install-dir=toolchain/arm
+$ ln -s /opt/android-ndk-r9c ndk
 @endcode
 
 Now it's time to build.  The following will build for all available architectures:
@@ -54,8 +62,22 @@ $ cmake .
 $ make
 @endcode
 
-Now look in the build directory to find your libraries, headers, and executables.
+Assuming a successful build, you should find the following files interesting:
 
+@code
+build/linux/enscrypt -- the command line utility
+build/linux/include/enscrypt.h -- header for the library
+build/linux/lib/libenscrypt.a -- static library
+build/linux/lib/libenscrypt.so -- shared library
+build/android/EnScrypt.zip -- Includes the libraries and a Java class to use them.  Import into your Android project's root to add EnScrypt support.
+@endcode
+
+If you'd like to run the test suite:
+
+@code
+$ cd build/linux
+$ make check
+@endcode
 
 @section utility Using the command line utility
 The command line utility is substantially similar to Steve Gibson's [reference implementation](https://www.grc.com/sqrl/scrypt.htm).  Normal use is almost identical:
