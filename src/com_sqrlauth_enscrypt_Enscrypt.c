@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <stdint.h>
+#include <string.h>
 #include "com_sqrlauth_enscrypt_Enscrypt.h"
 #include "enscrypt.h"
 
@@ -13,9 +14,38 @@ typedef struct progress_data {
 	jmethodID mid;
 } progress_data;
 
-static void progressFn( int p, void *cb_data ) {
+static progress_data fatal_error_data;
+
+static int progressFn( int p, void *cb_data ) {
 	progress_data *d = (progress_data*)cb_data;
-	(*(d->env))->CallVoidMethod( d->env, d->obj, d->mid, p );
+	return (*(d->env))->CallIntMethod( d->env, d->obj, d->mid, p );
+}
+
+static void fatal_error_function( const char *data ) {
+	JNIEnv *env = fatal_error_data.env;
+	size_t len = strlen(data);
+	jchar jca[len];
+	int i;
+	for( i = 0; i < len; i++ ) {
+		jca[i] = (jchar)data[i];
+	}
+	jcharArray charArr = (*env)->NewCharArray(fatal_error_data.env, len + 1 );
+	(*(fatal_error_data.env))->SetCharArrayRegion( fatal_error_data.env, charArr, 0, len, (jchar*)jca );
+	if( fatal_error_data.mid ) {
+		(*(fatal_error_data.env))->CallVoidMethod(
+			fatal_error_data.env,
+			fatal_error_data.obj,
+			fatal_error_data.mid,
+			charArr
+		);
+	}
+}
+
+static void power_on( JNIEnv *env, jobject obj ) {
+	fatal_error_data.env = env;
+	fatal_error_data.obj = obj;
+	fatal_error_data.mid = (*env)->GetMethodID( env, (*env)->GetObjectClass( env, obj ), "enscryptFatalError", "([C)V" );
+	enscrypt_set_fatal_error( fatal_error_function );
 }
 
 /*
@@ -46,8 +76,10 @@ JNIEXPORT jint JNICALL Java_com_sqrlauth_enscrypt_Enscrypt_enscrypt_1ms
 	}
 	d.env = env;
 	d.obj = jobj;
-	d.mid = (*env)->GetMethodID( env, (*env)->GetObjectClass( env, jobj ), "sendProgressMessage", "(I)V" );
+	d.mid = (*env)->GetMethodID( env, (*env)->GetObjectClass( env, jobj ), "sendProgressMessage", "(I)I" );
 	if( d.mid == 0 ) return -1;
+	
+	power_on( env, jobj );
 	
 	mBuf = (uint8_t*)((*env)->GetByteArrayElements(env, buf, NULL));
 	if( s_ln ) {
@@ -104,8 +136,10 @@ JNIEXPORT jint JNICALL Java_com_sqrlauth_enscrypt_Enscrypt_enscrypt
 	}
 	d.env = env;
 	d.obj = jobj;
-	d.mid = (*env)->GetMethodID( env, (*env)->GetObjectClass( env, jobj ), "sendProgressMessage", "(I)V" );
+	d.mid = (*env)->GetMethodID( env, (*env)->GetObjectClass( env, jobj ), "sendProgressMessage", "(I)I" );
 	if( d.mid == 0 ) return -5;
+	
+	power_on( env, jobj );
 	
 	mBuf = (uint8_t*)((*env)->GetByteArrayElements(env, buf, NULL));
 	if( s_ln ) {

@@ -143,8 +143,8 @@ Using the library</h2>
 <h3><a class="anchor" id="basiclib"></a>
 Basic Use</h3>
 <p>Typically, you'll just need two functions from the library, <a class="el" href="enscrypt_8h.html#a26eac647cd1afb26a47e2e57c2b374e3" title="Iteration based enscrypt.">enscrypt()</a> and <a class="el" href="enscrypt_8h.html#a636d6c629744e1573a00258ffe913cab" title="Time based enscrypt.">enscrypt_ms()</a>. They look like this:</p>
-<div class="fragment"><pre class="fragment"><span class="keywordtype">int</span> <a class="code" href="enscrypt_8h.html#a26eac647cd1afb26a47e2e57c2b374e3" title="Iteration based enscrypt.">enscrypt</a>(uint8_t *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *passwd, <span class="keyword">const</span> uint8_t *salt, <span class="keywordtype">int</span> iterations, <a class="code" href="enscrypt_8h.html#a4ff82700c482785d2920cef6c605ff0a" title="Progress callback prototype.">enscrypt_progress_fn</a> cb_ptr );
-<span class="keywordtype">int</span> <a class="code" href="enscrypt_8h.html#a636d6c629744e1573a00258ffe913cab" title="Time based enscrypt.">enscrypt_ms</a>( uint8_t *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *passwd, <span class="keyword">const</span> uint8_t *salt, <span class="keywordtype">int</span> millis, <a class="code" href="enscrypt_8h.html#a4ff82700c482785d2920cef6c605ff0a" title="Progress callback prototype.">enscrypt_progress_fn</a> cb_ptr );
+<div class="fragment"><pre class="fragment"><span class="keywordtype">int</span> <a class="code" href="enscrypt_8h.html#a26eac647cd1afb26a47e2e57c2b374e3" title="Iteration based enscrypt.">enscrypt</a>(uint8_t *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *passwd, <span class="keyword">const</span> uint8_t *salt, <span class="keywordtype">int</span> iterations, <a class="code" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7" title="Progress callback prototype.">enscrypt_progress_fn</a> cb_ptr );
+<span class="keywordtype">int</span> <a class="code" href="enscrypt_8h.html#a636d6c629744e1573a00258ffe913cab" title="Time based enscrypt.">enscrypt_ms</a>( uint8_t *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *passwd, <span class="keyword">const</span> uint8_t *salt, <span class="keywordtype">int</span> millis, <a class="code" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7" title="Progress callback prototype.">enscrypt_progress_fn</a> cb_ptr );
 </pre></div><p>To run 100 iterations: </p>
 <div class="fragment"><pre class="fragment"><span class="preprocessor">#include &lt;<a class="code" href="enscrypt_8h.html">enscrypt.h</a>&gt;</span>
 
@@ -185,14 +185,14 @@ Basic Use</h3>
 Advanced use</h3>
 <ul>
 <li>Function Prototypes:<ul>
-<li><a class="el" href="enscrypt_8h.html#a4ff82700c482785d2920cef6c605ff0a" title="Progress callback prototype.">enscrypt_progress_fn</a> progress callback prototype.</li>
+<li><a class="el" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7" title="Progress callback prototype.">enscrypt_progress_fn</a> progress callback prototype.</li>
 <li><a class="el" href="enscrypt_8h.html#aeee2eb12c17d0e6f663138fd670b6096" title="Fatal Error function prototype.">enscrypt_fatal_errorfn</a> fatal error function prototype.</li>
 </ul>
 </li>
 <li>Functions:<ul>
 <li><a class="el" href="enscrypt_8h.html#a26eac647cd1afb26a47e2e57c2b374e3" title="Iteration based enscrypt.">enscrypt()</a> Iteration based EnScrypt</li>
 <li><a class="el" href="enscrypt_8h.html#a636d6c629744e1573a00258ffe913cab" title="Time based enscrypt.">enscrypt_ms()</a> Time based EnScrypt</li>
-<li><a class="el" href="enscrypt_8h.html#aa051f6dd8852f0ac00f7857612d751fe" title="The original Scrypt PBKDF.">enscrypt_scrypt()</a> The original Scrypt PBKDF.</li>
+<li>::enscrypt_scrypt() The original Scrypt PBKDF.</li>
 <li><a class="el" href="enscrypt_8h.html#a996d6e7d162d0b1b6e505f617c4734b1" title="Get a value representing execution time.">enscrypt_get_real_time()</a> Get a value representing execution time.</li>
 <li><a class="el" href="enscrypt_8h.html#a759cb634b742b2f4c2c5da7c01342e95" title="Set a function to call in the event of an un-recoverable error.">enscrypt_set_fatal_error()</a> Set a function to call in the event of an un-recoverable error.</li>
 </ul>

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VALID=("armeabi" "armeabi-v7a" "armeabi-v7a with NEON" "armeabi-v7a with VFPV3" "armeabi-v6 with VFP")
+VALID=("armeabi" "armeabi-v7a" "x86")
 WD=${PWD##*/}
 WD=${WD//_/ }
 echo "-- BOOTSTRAPPING ${WD}"

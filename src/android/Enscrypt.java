@@ -1,5 +1,6 @@
 package com.sqrlauth.enscrypt;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
@@ -9,29 +10,34 @@ public class Enscrypt implements Runnable {
 	protected native double get_real_time();
 	
 	protected Handler handler;
-	protected Enscrypt.EnscryptListener listener;
+	protected Enscrypt.EnscryptListener myListener;
 	protected String password = null;
 	protected byte[] salt = null;
 	protected byte[] result = new byte[32];
 	protected int iterations = 0;
 	protected int duration = 0;
+	protected boolean cancelled = false;
 
 	public interface EnscryptListener {
-		public void enscryptFinished( byte[] result );
-		public void enscryptProgress(int p);
+		public void onEnscryptFinished( byte[] result );
+		public void onEnscryptProgress(int p);
+		public void onEnscryptError( String msg );
 	}
 	
 	static { System.loadLibrary( "enscrypt" ); }
 	
 	public Enscrypt(EnscryptListener listener) {
-		this.listener = listener;
+		this.myListener = listener;
 		this.handler = new Handler() {
 			@Override
 			public void handleMessage( Message msg ) {
-				if( msg.what == -1 ) {
-					handleFinished();
+				if( msg.what == 100 ) {
+					myListener.onEnscryptProgress(100);
+					if( !cancelled ) myListener.onEnscryptFinished(result);
+				} else if( msg.what == -2 ) {
+					myListener.onEnscryptError(new String(msg.getData().getCharArray("msg")));
 				} else {
-					handleProgress( msg.what );
+					myListener.onEnscryptProgress(msg.what);
 				}
 			}
 		};
@@ -43,20 +49,14 @@ public class Enscrypt implements Runnable {
 		this.password = null;
 		this.iterations = 0;
 		this.duration = 0;
+		this.cancelled = false;
 	}
 
-	private void handleFinished() {
-		listener.enscryptFinished(result);
-	}
-	
-	private void handleProgress( int p ) {
-		listener.enscryptProgress(p);
-	}
-	
 	public void doIterations( int iterations ) {
 		if( iterations < 1 ) iterations = 1;
 		this.iterations = iterations;
 		this.duration = 0;
+		this.cancelled = false;
 		new Thread( this ).start();
 	}
 	
@@ -64,7 +64,21 @@ public class Enscrypt implements Runnable {
 		if( millis < 1 ) millis = 1;
 		this.duration = millis;
 		this.iterations = 0;
+		this.cancelled = false;
 		new Thread( this ).start();
+	}
+	
+	public void cancel() {
+		this.cancelled = true;
+	}
+	
+	private void enscryptFatalError( char[] msg ) {
+		Bundle b = new Bundle();
+		b.putCharArray("msg", msg);
+		Message message = new Message();
+		message.setData(b);
+		message.what = -2;
+		this.handler.sendMessage(message);
 	}
 	
 	@Override
@@ -76,7 +90,6 @@ public class Enscrypt implements Runnable {
 			int retVal = this.enscrypt_ms( this.result, this.password, this.salt, this.duration );
 			this.iterations = retVal;
 		}
-		this.handler.sendEmptyMessage(-1);
 	}
 	
 	@Override
@@ -84,8 +97,10 @@ public class Enscrypt implements Runnable {
 		return this.result.toString();
 	}
 
-	public void sendProgressMessage( int p ) {
+	public int sendProgressMessage( int p ) {
 		this.handler.sendEmptyMessage( p );
+		if( cancelled ) return 0;
+		return 1;
 	}
 	
 	public String getPassword() {
@@ -121,5 +136,7 @@ public class Enscrypt implements Runnable {
 	public void setResult(byte[] result) {
 		this.result = result;
 	}
-
+	public boolean getCancelled() {
+		return this.cancelled;
+	}
 }

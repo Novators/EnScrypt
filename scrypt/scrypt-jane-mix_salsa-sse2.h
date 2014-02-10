@@ -411,33 +411,33 @@ scrypt_ChunkMix_sse2(uint32_t *Bout/*[chunkBytes]*/, uint32_t *Bin/*[chunkBytes]
 #endif
 
 /* used by avx,etc as well */
-#if defined(SCRYPT_SALSA_INCLUDED)
-	/*
-		Default layout:
-		 0  1  2  3
-		 4  5  6  7
-		 8  9 10 11
-		12 13 14 15
+#if defined(SCRYPT_SALSA_SSE2) || defined(SCRYPT_SALSA_AVX) || defined(SCRYPT_SALSA_XOP)
+/*
+	Default layout:
+		0  1  2  3
+		4  5  6  7
+		8  9 10 11
+	12 13 14 15
 
-		SSE2 layout:
-		 0  5 10 15
-		12  1  6 11
-		 8 13  2  7
-		 4  9 14  3
-	*/
+	SSE2 layout:
+		0  5 10 15
+	12  1  6 11
+		8 13  2  7
+		4  9 14  3
+*/
 
-	static void asm_calling_convention
-	salsa_core_tangle_sse2(uint32_t *blocks, size_t count) {
-		uint32_t t;
-		while (count--) {
-			t = blocks[1]; blocks[1] = blocks[5]; blocks[5] = t;
-			t = blocks[2]; blocks[2] = blocks[10]; blocks[10] = t;
-			t = blocks[3]; blocks[3] = blocks[15]; blocks[15] = t;
-			t = blocks[4]; blocks[4] = blocks[12]; blocks[12] = t;
-			t = blocks[7]; blocks[7] = blocks[11]; blocks[11] = t;
-			t = blocks[9]; blocks[9] = blocks[13]; blocks[13] = t;
-			blocks += 16;
-		}
+static void asm_calling_convention
+salsa_core_tangle_sse2(uint32_t *blocks, size_t count) {
+	uint32_t t;
+	while (count--) {
+		t = blocks[1]; blocks[1] = blocks[5]; blocks[5] = t;
+		t = blocks[2]; blocks[2] = blocks[10]; blocks[10] = t;
+		t = blocks[3]; blocks[3] = blocks[15]; blocks[15] = t;
+		t = blocks[4]; blocks[4] = blocks[12]; blocks[12] = t;
+		t = blocks[7]; blocks[7] = blocks[11]; blocks[11] = t;
+		t = blocks[9]; blocks[9] = blocks[13]; blocks[13] = t;
+		blocks += 16;
 	}
+}
 #endif
 

@@ -43,8 +43,8 @@ bool showHelp = false;
 bool verbose = true;
 int nextProgress = 2;
 
-const char hexTable[32] = "0123456789abcdef0123456789ABCDEF";
-const char decTable[10] = "0123456789";
+const char hexTable[33] = "0123456789abcdef0123456789ABCDEF";
+const char decTable[11] = "0123456789";
 
 char help[] = "\
      Usage: enscrypt [-q] [password] [salt] [iteration count] [duration] \n\
@@ -65,7 +65,7 @@ salt              A 64 character hex string representing a 32 byte salt.  \n\
 password          Any string not matching the above arguments.\n\n\
 All arguments are optional, and order is arbitrary.";
 
-void progress( int p, void *cb_data )
+int progress( int p, void *cb_data )
 {
 	const char sym[] = "|****";
 	while( p >= nextProgress ) {
@@ -79,6 +79,7 @@ void progress( int p, void *cb_data )
 		nextProgress += 2;
 	}
 	fflush( stdout );
+	return 1;
 }
 
 void hexify( char *out, const uint8_t *in )

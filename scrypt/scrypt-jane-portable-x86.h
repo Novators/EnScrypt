@@ -251,19 +251,6 @@
 
 #if defined(CPU_X86) || defined(CPU_X86_64)
 
-typedef enum cpu_flags_x86_t {
-	cpu_mmx = 1 << 0,
-	cpu_sse = 1 << 1,
-	cpu_sse2 = 1 << 2,
-	cpu_sse3 = 1 << 3,
-	cpu_ssse3 = 1 << 4,
-	cpu_sse4_1 = 1 << 5,
-	cpu_sse4_2 = 1 << 6,
-	cpu_avx = 1 << 7,
-	cpu_xop = 1 << 8,
-	cpu_avx2 = 1 << 9
-} cpu_flags_x86;
-
 typedef enum cpu_vendors_x86_t {
 	cpu_nobody,
 	cpu_intel,
@@ -340,12 +327,10 @@ get_xgetbv(uint32_t flags) {
 size_t cpu_detect_mask = (size_t)-1;
 #endif
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 static size_t
 detect_cpu(void) {
-	union { uint8_t s[12]; uint32_t i[3]; } vendor_string;
-	cpu_vendors_x86 vendor = cpu_nobody;
+	//union { uint8_t s[12]; uint32_t i[3]; } vendor_string;
+	//cpu_vendors_x86 vendor = cpu_nobody;
 	x86_regs regs;
 	uint32_t max_level, max_ext_level;
 	size_t cpu_flags = 0;
@@ -360,14 +345,16 @@ detect_cpu(void) {
 
 	get_cpuid(&regs, 0);
 	max_level = regs.eax;
-	vendor_string.i[0] = regs.ebx;
-	vendor_string.i[1] = regs.edx;
-	vendor_string.i[2] = regs.ecx;
+	//vendor_string.i[0] = regs.ebx;
+	//vendor_string.i[1] = regs.edx;
+	//vendor_string.i[2] = regs.ecx;
 
+	/*
 	if (scrypt_verify(vendor_string.s, (const uint8_t *)"GenuineIntel", 12))
 		vendor = cpu_intel;
 	else if (scrypt_verify(vendor_string.s, (const uint8_t *)"AuthenticAMD", 12))
 		vendor = cpu_amd;
+	*/
 	
 	if (max_level & 0x00000500) {
 		/* "Intel P5 pre-B0" */
@@ -415,23 +402,6 @@ detect_cpu(void) {
 
 	return cpu_flags;
 }
-#pragma GCC diagnostic pop
-
-#if defined(SCRYPT_TEST_SPEED)
-static const char *
-get_top_cpuflag_desc(size_t flag) {
-	if (flag & cpu_avx2) return "AVX2";
-	else if (flag & cpu_xop) return "XOP";
-	else if (flag & cpu_avx) return "AVX";
-	else if (flag & cpu_sse4_2) return "SSE4.2";
-	else if (flag & cpu_sse4_1) return "SSE4.1";
-	else if (flag & cpu_ssse3) return "SSSE3";
-	else if (flag & cpu_sse2) return "SSE2";
-	else if (flag & cpu_sse) return "SSE";
-	else if (flag & cpu_mmx) return "MMX";
-	else return "Basic";
-}
-#endif
 
 /* enable the highest system-wide option */
 #if defined(SCRYPT_CHOOSE_COMPILETIME)

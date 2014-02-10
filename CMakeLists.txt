@@ -26,31 +26,41 @@ find_program(ANDROID_PROGRAM android)
 find_program(JAR_PROGRAM jar)
 find_program(ZIP_PROGRAM zip)
 
-set(ARM_ARCHS armeabi armeabi-v7a "armeabi-v7a_with_NEON" "armeabi-v7a_with_VFPV3" "armeabi-v6_with_VFP")
-set(ARCHS ${ARM_ARCHS})
 if(UNIX)
-	set(ARCHS ${ARCHS} "linux")
+	set(ARCHS "linux")
 endif(UNIX)
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/toolchain)
+	set(TOOLCHAIN_DIR ${CMAKE_SOURCE_DIR}/toolchain)
+else()
+	set(TOOLCHAIN_DIR ${CMAKE_SOURCE_DIR}/../toolchain)
+endif()
+
+set(HAVE_X86_TOOLCHAIN FALSE)
+if(EXISTS ${TOOLCHAIN_DIR}/x86)
+	set(ANDROID_LIBS "x86")
+	set(HAVE_X86_TOOLCHAIN TRUE)
+	set(x86_toolchain ${TOOLCHAIN_DIR}/x86)
+endif()
+
 set(HAVE_ARM_TOOLCHAIN FALSE)
-if(EXISTS ${CMAKE_SOURCE_DIR}/toolchain/arm)
+if(EXISTS ${TOOLCHAIN_DIR}/arm)
+	set(ANDROID_LIBS "${ANDROID_LIBS}" "armeabi" "armeabi-v7a")
 	set(HAVE_ARM_TOOLCHAIN TRUE)
-	set(arm_toolchain ${CMAKE_SOURCE_DIR}/toolchain/arm)
+	set(arm_toolchain ${TOOLCHAIN_DIR}/arm)
 endif()
-if(EXISTS ${CMAKE_SOURCE_DIR}/../toolchain/arm)
-	set(HAVE_ARM_TOOLCHAIN TRUE)
-	set(arm_toolchain ${CMAKE_SOURCE_DIR}/../toolchain/arm)
-endif()
-message("-- Detecting ARM Toolchain - " ${HAVE_ARM_TOOLCHAIN})
+
+set(ARCHS ${ARCHS} ${ANDROID_LIBS})
 
 if(HAVE_ARM_TOOLCHAIN)
 	if(ANT_PROGRAM)
-		if(ANDROID_PROGRAM)
-			set(ARCHS ${ARCHS} android)
-		endif(ANDROID_PROGRAM)
+		if(ZIP_PROGRAM)
+			if(ANDROID_PROGRAM)
+				set(ARCHS "${ARCHS}" "android")
+			endif(ANDROID_PROGRAM)
+		endif(ZIP_PROGRAM)
 	endif(ANT_PROGRAM)
 endif(HAVE_ARM_TOOLCHAIN)
-
 
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
@@ -64,14 +74,13 @@ else()
 	endforeach()
 endif()
 
-find_substring(ARCH ARM_ARCHS substring_found)
+find_substring(ARCH ANDROID_LIBS substring_found)
 if(substring_found)
-	set(ARM_PLATFORM TRUE)
+	set(ANDROID_LIB TRUE)
 endif(substring_found)
 
 ########## Meta Configuration ##########
 if(BUILD_meta)
-	configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${SRCDIR}/config.h)
 	configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_SOURCE_DIR}/Doxyfile)
 	configure_file(${CMAKE_SOURCE_DIR}/README.md.in ${CMAKE_SOURCE_DIR}/README.md)
 	configure_file(${CMAKE_SOURCE_DIR}/mainpage.dox.in ${CMAKE_SOURCE_DIR}/mainpage.dox)
@@ -88,38 +97,33 @@ if(BUILD_meta)
 	configure_file(${CMAKE_SOURCE_DIR}/CMakeLists.txt ${CMAKE_SOURCE_DIR}/build/CMakeLists.txt COPYONLY)
 	file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
 	foreach(arch ${ARCHS})
-		find_substring(arch ARM_ARCHS substring_found)
-		set(select_arch FALSE)
-		if(substring_found)
-			if(HAVE_ARM_TOOLCHAIN)
-				set(select_arch TRUE)
-			endif(HAVE_ARM_TOOLCHAIN)
-		else(substring_found)
-			set(select_arch TRUE)
-		endif(substring_found)
-		if(select_arch)
-			message( "-- Selecting: " ${arch} )
-			set(pr_dir "${CMAKE_SOURCE_DIR}/build/${arch}")
-			file(MAKE_DIRECTORY "${pr_dir}")
-			if("${arch}" STREQUAL "android")
-				add_custom_target(${arch} ALL DEPENDS ${pr_dir}/Makefile armeabi armeabi-v7a)
-			else()
-				add_custom_target(${arch} ALL DEPENDS ${pr_dir}/Makefile)
-			endif()
-			add_custom_command(
-				TARGET ${arch}
-				PRE_BUILD
-				WORKING_DIRECTORY ${pr_dir}
-				COMMAND "${CMAKE_MAKE_PROGRAM}"
-			)
-			add_custom_command(
-				OUTPUT "${pr_dir}/Makefile" "${pr_dir}/CMakeCache.txt" "${pr_dir}/CMakeFiles/"
-				WORKING_DIRECTORY ${pr_dir}
-				COMMAND ${CMAKE_SOURCE_DIR}/bootstrap.sh ${arm_toolchain}
-			)
-		endif(select_arch)
+		message( "-- Selecting: " ${arch} )
+		set(pr_dir "${CMAKE_SOURCE_DIR}/build/${arch}")
+		file(MAKE_DIRECTORY "${pr_dir}")
+		if("${arch}" STREQUAL "x86")
+			set(toolchain ${x86_toolchain})
+		else()
+			set(toolchain ${arm_toolchain})
+		endif()
+		if("${arch}" STREQUAL "android")
+			add_custom_target(${arch} ALL DEPENDS ${pr_dir}/Makefile ${ANDROID_LIBS})
+		else()
+			add_custom_target(${arch} ALL DEPENDS ${pr_dir}/Makefile)
+		endif()
+		add_custom_command(
+			TARGET ${arch}
+			PRE_BUILD
+			WORKING_DIRECTORY ${pr_dir}
+			COMMAND "${CMAKE_MAKE_PROGRAM}"
+		)
+		add_custom_command(
+			OUTPUT "${pr_dir}/Makefile" "${pr_dir}/CMakeCache.txt" "${pr_dir}/CMakeFiles/"
+			WORKING_DIRECTORY ${pr_dir}
+			COMMAND ${CMAKE_SOURCE_DIR}/bootstrap.sh ${toolchain}
+		)
 	endforeach(arch)
 	unset(pr_dir)
+	unset(toolchain)
 	
 endif(BUILD_meta)
 
@@ -128,6 +132,7 @@ if(BUILD_linux)
 	project(EnScrypt-linux)
 	set(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
 	set(SRCDIR ${CMAKE_SOURCE_DIR}/src)
+	include_directories(${CMAKE_CURRENT_BINARY_DIR})
 	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -136,6 +141,8 @@ if(BUILD_linux)
 	if(CMAKE_COMPILER_IS_GNUCC)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 	endif(CMAKE_COMPILER_IS_GNUCC)
+
+	configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 	configure_file(${SRCDIR}/enscrypt.h ${CMAKE_CURRENT_BINARY_DIR}/include/enscrypt.h COPYONLY)
 
 	########## Library Target ##########
@@ -179,19 +186,21 @@ if(BUILD_linux)
 endif(BUILD_linux)
 
 if(BUILD_android)
+	message("BUILD_android")
 	project(EnScrypt-${ARCH})
 	set(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
 	set(SRCDIR ${CMAKE_CURRENT_BINARY_DIR}/EnScrypt)
-	
+
+	configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
 	set(ANDROID_TARGET "android-19")
-	configure_file("${CMAKE_CURRENT_BINARY_DIR}/../armeabi/libenscrypt.so" ${SRCDIR}/libs/armeabi/libenscrypt.so COPYONLY)
-	configure_file("${CMAKE_CURRENT_BINARY_DIR}/../armeabi-v7a/libenscrypt.so" ${SRCDIR}/libs/armeabi-v7a/libenscrypt.so COPYONLY)
+	
 	configure_file("${CMAKE_SOURCE_DIR}/src/android/Enscrypt.java" ${SRCDIR}/src/com/sqrlauth/enscrypt/Enscrypt.java COPYONLY)
 	configure_file("${CMAKE_SOURCE_DIR}/src/android/AndroidManifest.xml" ${CMAKE_CURRENT_BINARY_DIR}/AndroidManifest.xml COPYONLY)
-	#configure_file("${CMAKE_SOURCE_DIR}/src/android/Android.mk" "${SRCDIR}/jni/Android.mk" COPYONLY)
-	
-	message("ANDROID: " ${ANDROID_PROGRAM})
-	message("ANT: " ${ANT_PROGRAM})
+	foreach(ldir ${ANDROID_LIBS})
+		configure_file("${CMAKE_CURRENT_BINARY_DIR}/../${ldir}/libenscrypt.so" "${SRCDIR}/libs/${ldir}/libenscrypt.so" COPYONLY)
+	endforeach(ldir)
+	unset(ldir)
 	
 	add_custom_command(
 		OUTPUT "${SRCDIR}/build.xml"
@@ -220,19 +229,30 @@ if(BUILD_android)
 				TARGET android-lib
 				POST_BUILD
 				WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/EnScrypt
-				COMMAND ${ZIP_PROGRAM} -r ../EnScrypt.zip libs
+				COMMAND ${ZIP_PROGRAM} -r ../EnScrypt.zip libs 
 			)
 		endif(ZIP_PROGRAM)
 	endif(JAR_PROGRAM)
 endif(BUILD_android)
 
 ########## Android-ARM Configuration ##########
-if(ARM_PLATFORM)
+if(ANDROID_LIB)
 	project(EnScrypt-${ARCH})
 	set(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
 	set(SRCDIR ${CMAKE_SOURCE_DIR}/src)
 	
-	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/toolchain/arm/sysroot/usr/include)
+	if(${ARCH} STREQUAL "x86")
+		set(TCDIR ${TOOLCHAIN_DIR}/x86)
+	else()
+		set(TCDIR ${TOOLCHAIN_DIR}/arm)
+		if(${ARCH} STREQUAL "armeabi-v7a")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=softfp -mfpu=neon -DARM7")
+		endif()
+	endif()
+
+	include_directories(${CMAKE_CURRENT_BINARY_DIR})
+	include_directories(${SRCDIR})
+	configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 	
 	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -244,8 +264,6 @@ if(ARM_PLATFORM)
 	configure_file(${SRCDIR}/enscrypt.h ${CMAKE_CURRENT_BINARY_DIR}/include/enscrypt.h COPYONLY)
 
 	########## Library Target ##########
-	set(LIBSRC ${SRCDIR}/enscrypt.c ${SRCDIR}/realtime.c ${SRCDIR}/com_sqrlauth_enscrypt_Enscrypt.c)
+	set(LIBSRC ${SRCDIR}/enscrypt.c ${SRCDIR}/realtime.c ${SRCDIR}/com_sqrlauth_enscrypt_Enscrypt.c ${SRCDIR}/cpu-features.c)
 	add_library(enscrypt SHARED ${LIBSRC})
-	#add_library(enscrypt_static STATIC ${LIBSRC})
-	#set_target_properties(enscrypt_static PROPERTIES OUTPUT_NAME enscrypt)
-endif(ARM_PLATFORM)
+endif(ANDROID_LIB)

@@ -1,5 +1,8 @@
 /* determine os */
-#if defined(_WIN32)	|| defined(_WIN64) || defined(__TOS_WIN__) || defined(__WINDOWS__)
+#if defined(__ANDROID__)
+	#include "sysendian.h"
+	#define OS_ANDROID
+#elif defined(_WIN32)	|| defined(_WIN64) || defined(__TOS_WIN__) || defined(__WINDOWS__)
 	#include <windows.h>
 	#include <wincrypt.h>
 	#define OS_WINDOWS
@@ -22,7 +25,6 @@
 		#define OS_LINUX
 	#elif defined(BSD)
 		#define OS_BSD
-
 		#if defined(MACOS_X) || (defined(__APPLE__) & defined(__MACH__))
 			#define OS_OSX
 		#elif defined(macintosh) || defined(Macintosh)
@@ -127,12 +129,8 @@
 		#define INLINE inline
 	#endif
 	#undef FASTCALL
-	#ifndef __arm__
-		#if (COMPILER_GCC >= 30400)
-			#define FASTCALL __attribute__((fastcall))
-		#else
-			#define FASTCALL
-		#endif
+	#if (COMPILER_GCC >= 30400)
+		#define FASTCALL __attribute__((fastcall))
 	#else
 		#define FASTCALL
 	#endif
@@ -140,7 +138,6 @@
 	#define CDECL __attribute__((cdecl))
 	#undef STDCALL
 	#define STDCALL __attribute__((stdcall))
-	#undef ALIGN
 	#define ALIGN(n) __attribute__((aligned(n)))
 	#include <stdint.h>
 #endif
@@ -172,10 +169,14 @@
 	#define CPU_X86 300
 #elif defined(__ia64__) || defined(_IA64) || defined(__IA64__) || defined(_M_IA64) || defined(__ia64)
 	#define CPU_IA64
-#endif
-
-#if defined(__arm__)
+#elif defined(__arm__)
+	#undef FASTCALL
+	#define FASTCALL
 	#define CPU_ARM
+#elif defined(__mips__)
+	#undef FASTCALL
+	#define FASTCALL
+	#define CPU_MIPS
 #endif
 
 #if defined(__sparc__) || defined(__sparc) || defined(__sparcv9)
@@ -271,6 +272,7 @@
     (v) = ((v) << 32) | ((v) >> 32);                                                        \
 }
 
+/*
 static int
 scrypt_verify(const uint8_t *x, const uint8_t *y, size_t len) {
 	uint32_t differentbits = 0;
@@ -278,6 +280,7 @@ scrypt_verify(const uint8_t *x, const uint8_t *y, size_t len) {
 		differentbits |= (*x++ ^ *y++);
 	return (1 & ((differentbits - 1) >> 8));
 }
+*/
 
 static void
 scrypt_ensure_zero(void *p, size_t len) {
@@ -309,12 +312,46 @@ scrypt_ensure_zero(void *p, size_t len) {
 #endif
 }
 
+typedef enum cpu_flags_t {
+	cpu_mmx = 1 << 0,
+	cpu_sse = 1 << 1,
+	cpu_sse2 = 1 << 2,
+	cpu_sse3 = 1 << 3,
+	cpu_ssse3 = 1 << 4,
+	cpu_sse4_1 = 1 << 5,
+	cpu_sse4_2 = 1 << 6,
+	cpu_avx = 1 << 7,
+	cpu_xop = 1 << 8,
+	cpu_avx2 = 1 << 9,
+	cpu_armv7 = 1 << 10,
+	cpu_vfp3 = 1 << 11,
+	cpu_neon = 1 << 12
+} cpu_flags;
+
+#if defined(SCRYPT_TEST_SPEED)
+static const char *
+get_top_cpuflag_desc(size_t flag) {
+	if (flag & cpu_avx2) return "AVX2";
+	else if (flag & cpu_xop) return "XOP";
+	else if (flag & cpu_avx) return "AVX";
+	else if (flag & cpu_sse4_2) return "SSE4.2";
+	else if (flag & cpu_sse4_1) return "SSE4.1";
+	else if (flag & cpu_ssse3) return "SSSE3";
+	else if (flag & cpu_sse2) return "SSE2";
+	else if (flag & cpu_sse) return "SSE";
+	else if (flag & cpu_mmx) return "MMX";
+	else if (flag & cpu_armv7) return "ARMv7";
+	else if (flag & cpu_vfp3) return "VFPv3";
+	else if (flag & cpu_neon) return "NEON";
+	else return "Basic";
+}
+#endif
+
 #if defined(CPU_ARM)
 	#include "scrypt-jane-portable-arm.h"
 #else
 	#include "scrypt-jane-portable-x86.h"
 #endif
-
 #if !defined(asm_calling_convention)
 #define asm_calling_convention
 #endif

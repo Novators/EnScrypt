@@ -51,8 +51,9 @@ extern "C" {
  *
  * @param  percent an integer from 0..100 inclusive, indicating percent of operation complete.
  * @param  data pointer to data for application use (or NULL).
+ * @return Integer -- 0 to cancel operation, positive to continue.
  **/
-typedef void (*enscrypt_progress_fn)(int percent, void* data);
+typedef int (*enscrypt_progress_fn)(int percent, void* data);
 
 
 /**
@@ -85,21 +86,6 @@ void enscrypt_set_fatal_error(enscrypt_fatal_errorfn fn);
  * @return time in seconds, or -1.0 on error
  **/
 double enscrypt_get_real_time();
-
-/**
- * @brief The original Scrypt PBKDF
- *
- * @param password string containing the password.
- * @param password_len length of password.
- * @param salt pointer to unsigned char array to use as salt.
- * @param salt_len length of salt.
- * @param Nfactor N = (1 << (Nfactor + 1))
- * @param rfactor r = (1 << rfactor)
- * @param pfactor p = (1 << pfactor)
- * @param out pointer to buffer receive result.
- * @param bytes Number of bytes to write to out.
- **/
-void enscrypt_scrypt(const unsigned char *password, size_t password_len, const unsigned char *salt, size_t salt_len, unsigned char Nfactor, unsigned char rfactor, unsigned char pfactor, unsigned char *out, size_t bytes);
 
 /**
  * @brief Iteration based enscrypt

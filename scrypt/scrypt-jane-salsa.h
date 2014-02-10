@@ -15,6 +15,9 @@ typedef uint32_t scrypt_mix_word_t;
 #include "scrypt-jane-mix_salsa-avx.h"
 #include "scrypt-jane-mix_salsa-sse2.h"
 #include "scrypt-jane-mix_salsa.h"
+#if defined(NEON)
+#include "scrypt-jane-mix_salsa-neon.h"
+#endif
 
 #if defined(SCRYPT_SALSA_XOP)
 	#define SCRYPT_CHUNKMIX_FN scrypt_ChunkMix_xop
@@ -51,10 +54,16 @@ typedef uint32_t scrypt_mix_word_t;
 #if !defined(SCRYPT_CHOOSE_COMPILETIME)
 static scrypt_ROMixfn
 scrypt_getROMix(void) {
-#ifndef __arm__
+#if defined(SCRYPT_SALSA_XOP) || defined(SCRYPT_SALSA_AVX) || defined(SCRYPT_SALSA_SSE2) || defined(SCRYPT_SALSA_NEON)
 	size_t cpuflags = detect_cpu();
 #endif
 
+#if defined(SCRYPT_SALSA_NEON)
+	if( cpuflags & cpu_neon )
+		return scrypt_ROMix_neon;
+	else
+#endif
+	
 #if defined(SCRYPT_SALSA_XOP)
 	if (cpuflags & cpu_xop)
 		return scrypt_ROMix_xop;
@@ -103,37 +112,3 @@ available_implementations(void) {
 }
 #endif
 
-
-static int
-scrypt_test_mix(void) {
-	static const uint8_t expected[16] = {
-		0x41,0x1f,0x2e,0xa3,0xab,0xa3,0x1a,0x34,0x87,0x1d,0x8a,0x1c,0x76,0xa0,0x27,0x66,
-	};
-
-	int ret = 1;
-#ifndef __arm__
-	size_t cpuflags = detect_cpu();
-#endif
-	
-	
-#if defined(SCRYPT_SALSA_XOP)
-	if (cpuflags & cpu_xop)
-		ret &= scrypt_test_mix_instance(scrypt_ChunkMix_xop, salsa_core_tangle_sse2, salsa_core_tangle_sse2, expected);
-#endif
-
-#if defined(SCRYPT_SALSA_AVX)
-	if (cpuflags & cpu_avx)
-		ret &= scrypt_test_mix_instance(scrypt_ChunkMix_avx, salsa_core_tangle_sse2, salsa_core_tangle_sse2, expected);
-#endif
-
-#if defined(SCRYPT_SALSA_SSE2)
-	if (cpuflags & cpu_sse2)
-		ret &= scrypt_test_mix_instance(scrypt_ChunkMix_sse2, salsa_core_tangle_sse2, salsa_core_tangle_sse2, expected);
-#endif
-
-#if defined(SCRYPT_SALSA_BASIC)
-	ret &= scrypt_test_mix_instance(scrypt_ChunkMix_basic, scrypt_romix_convert_endian, scrypt_romix_convert_endian, expected);
-#endif
-
-	return ret;
-}

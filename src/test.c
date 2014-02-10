@@ -47,8 +47,8 @@ bool test_enscrypt()
 	startTime = enscrypt_get_real_time();
 	printf( "Repeatability (2 x 2s): " );
 	fflush( stdout );
-	iter = enscrypt_ms( buf, NULL, NULL, 2000, NULL );
-	elapsed = enscrypt( buf2, NULL, NULL, iter, NULL ) * 2;
+	iter = enscrypt_ms( buf, NULL, NULL, 2000, NULL, NULL );
+	elapsed = enscrypt( buf2, NULL, NULL, iter, NULL, NULL ) * 2;
 	if( memcmp( buf, buf2, 32 ) == 0 ) {
 		printf( "PASSED (~%2d.%03d seconds)\n", elapsed / 1000, elapsed % 1000 );
 	} else {
@@ -63,7 +63,7 @@ bool test_enscrypt()
 	for( i = 0; i < 5; i++ ) {
 		printf( "%22s: ", testNames[i] );
 		fflush( stdout );
-		elapsed = enscrypt( buf, testPasswords[i], testSalts[i] ? nullsalt : NULL, testIterations[i], NULL );
+		elapsed = enscrypt( buf, testPasswords[i], testSalts[i] ? nullsalt : NULL, testIterations[i], NULL, NULL );
 		hexify( result, buf );
 		if( memcmp( result, testResults[i], 64 ) == 0 ) {
 			printf( "PASSED (%3d.%03d seconds)\n", elapsed / 1000, elapsed % 1000 );
