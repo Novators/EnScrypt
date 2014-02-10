@@ -79,6 +79,13 @@ $ cd build/linux
 $ make check
 @endcode
 
+To install the library and executable (to /usr/local):
+
+@code
+$ cd build/linux
+$ sudo make install
+@endcode
+
 @section utility Using the command line utility
 The command line utility is substantially similar to Steve Gibson's [reference implementation](https://www.grc.com/sqrl/scrypt.htm).  Normal use is almost identical:
 
@@ -138,9 +145,10 @@ To use a callback function to monitor progress:
 @code
 #include <enscrypt.h>
 
-void progress_fn( int progress )
+int progress_fn( int progress )
 {
   printf( "%d%%\n", progress );
+  return 1; // Returning 0 would cancel the operation.
 }
 
 int main()
@@ -158,7 +166,6 @@ int main()
   - Functions:
     - ::enscrypt() Iteration based EnScrypt
     - ::enscrypt_ms() Time based EnScrypt
-    - ::enscrypt_scrypt() The original Scrypt PBKDF.
     - ::enscrypt_get_real_time() Get a value representing execution time.
     - ::enscrypt_set_fatal_error() Set a function to call in the event of an un-recoverable error.
     

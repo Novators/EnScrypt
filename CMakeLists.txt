@@ -88,7 +88,7 @@ if(ARCH STREQUAL "linux")
 		LIBRARY DESTINATION lib 
 		ARCHIVE DESTINATION lib
 		RUNTIME DESTINATION bin)
-	install(FILES enscrypt.h DESTINATION include)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/enscrypt.h DESTINATION include)
 
 	########## Uninstall Target ##########
 	CONFIGURE_FILE(

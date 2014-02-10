@@ -74,6 +74,12 @@ $ cd build/linux
 $ make check
 ```
 
+To install the library and executable (to /usr/local):
+```
+$ cd build/linux
+$ sudo make install
+```
+
 ## Using the command line utility
 The command line utility is substantially similar to Steve Gibson's [reference implementation](https://www.grc.com/sqrl/scrypt.htm).  Normal use is almost identical:
 
