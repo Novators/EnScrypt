@@ -26,7 +26,7 @@ endif()
 
 ########## Platform Tests ##########
 set(ALL_ARCHS "linux" "armeabi" "armeabi-v7a" "x86" "mips" "android")
-set(ANDROID_ARCHS "armeabi" "armeabi-v7a")
+set(ANDROID_ARCHS "armeabi" "armeabi-v7a" "x86" "mips")
 
 foreach(arch ${ALL_ARCHS})
 	if("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}/${arch}")

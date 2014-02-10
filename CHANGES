@@ -17,3 +17,7 @@
 	* build 6
 		* Android Library
 		* Changed Progress callback's signature
+	* build 7
+		* Optimized for ARM (with NEON)
+		* Cleaned up Build Scripts
+		* Added ability to "cancel" from progress callback
