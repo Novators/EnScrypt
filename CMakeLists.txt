@@ -94,9 +94,6 @@ elseif(ARCH STREQUAL "linux")
 	set(LIBSRC ${SRCDIR}/enscrypt.c ${SRCDIR}/realtime.c)
 	add_library(enscrypt SHARED ${LIBSRC})
 	target_link_libraries(enscrypt ${LIBS})
-	add_library(enscrypt_static STATIC ${LIBSRC})
-	target_link_libraries(enscrypt_static ${LIBS})
-	set_target_properties(enscrypt_static PROPERTIES OUTPUT_NAME enscrypt)
 
 	########## Binary Target ##########
 	add_executable(enscrypt_bin ${SRCDIR}/enscrypt_bin.c)
@@ -115,7 +112,7 @@ elseif(ARCH STREQUAL "linux")
 	add_dependencies(check enscrypt_test)
 
 	########## Install Target ##########
-	install(TARGETS enscrypt enscrypt_bin enscrypt_static 
+	install(TARGETS enscrypt enscrypt_bin
 		LIBRARY DESTINATION lib 
 		ARCHIVE DESTINATION lib
 		RUNTIME DESTINATION bin)
