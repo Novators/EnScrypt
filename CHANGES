@@ -21,3 +21,5 @@
 		* Optimized for ARM (with NEON)
 		* Cleaned up Build Scripts
 		* Added ability to "cancel" from progress callback
+	* build 8
+		* Support for Windows (win32) platform

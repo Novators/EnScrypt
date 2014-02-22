@@ -28,6 +28,7 @@ Based on:
 @section platforms Supported Platforms
 This implementation is intended to work on multiple platforms.  Tested platforms include:
 - Linux (Ubuntu 32 and 64 bit)
+- Win32 (Tested on Windows 8.1 64bit)
 - Android ARM
 - Android ARM with NEON (optimized implementation with runtime detection of NEON support and fallback)
  
@@ -36,55 +37,12 @@ Compiles, but has not been thoroughly tested on:
 - Android MIPS
  
 Planned, but not yet supported:
-- Windows
 - OSX
 - iOS
 
 
 @section installing Building and Installing
-EnScrypt uses the [CMake](http://www.cmake.org/) build system.  CMake will create project files for your target platform.  To build on a linux system:
-
-@code
-$ git clone https://github.com/Novators/EnScrypt.git
-$ cd EnScrypt
-@endcode
-
-If you are building for Android, you'll need the NDK installed (or linked) in ```./ndk```.  You must also have 'ant', 'zip', and 'android' available on your system.
-
-@code
-$ ln -s /opt/android-ndk-r9c ndk
-@endcode
-
-Now it's time to build.  The following will build for all available architectures:
-
-@code
-$ cmake .
-$ make
-@endcode
-
-Assuming a successful build, you should find the following files interesting:
-
-@code
-build/linux/enscrypt -- the command line utility
-build/linux/include/enscrypt.h -- header for the library
-build/linux/lib/libenscrypt.a -- static library
-build/linux/lib/libenscrypt.so -- shared library
-build/android/EnScrypt.zip -- Includes the libraries and a Java class to use them.  Import into your Android project's root to add EnScrypt support.
-@endcode
-
-If you'd like to run the test suite:
-
-@code
-$ cd build/linux
-$ make check
-@endcode
-
-To install the library and executable (to /usr/local):
-
-@code
-$ cd build/linux
-$ sudo make install
-@endcode
+See the BUILDING.md file for build instructions.
 
 @section utility Using the command line utility
 The command line utility is substantially similar to Steve Gibson's [reference implementation](https://www.grc.com/sqrl/scrypt.htm).  Normal use is almost identical:
