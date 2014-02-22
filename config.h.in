@@ -5,7 +5,6 @@
 #define ENSCRYPT_BUILD @enscrypt_build@
 
 #cmakedefine UNIX
-#cmakedefine WIN32
 #cmakedefine CYGWIN
 #cmakedefine CMAKE_COMPILER_IS_GNUCC
 #cmakedefine MSVC
@@ -14,7 +13,7 @@
   #ifdef CMAKE_COMPILER_IS_GNUCC
     #define DLL_PUBLIC __attribute__ ((dllexport))
   #else
-    #define DLL_PUBLIC __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
+    #define DLL_PUBLIC __declspec(dllexport)
   #endif
   #define DLL_LOCAL
 #else

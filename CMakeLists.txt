@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(enscrypt_version_major 1)
 set(enscrypt_version_minor 1)
-set(enscrypt_build 7)
+set(enscrypt_build 8)
 set(enscrypt_version "${enscrypt_version_major}.${enscrypt_version_minor} build ${enscrypt_build}")
 
 set(CMAKE_BUILD_TYPE Release)
@@ -25,7 +25,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif()
 
 ########## Platform Tests ##########
-set(ALL_ARCHS "linux" "armeabi" "armeabi-v7a" "x86" "mips" "android")
+set(ALL_ARCHS "win32" "linux" "armeabi" "armeabi-v7a" "x86" "mips" "android")
 set(ANDROID_ARCHS "armeabi" "armeabi-v7a" "x86" "mips")
 
 foreach(arch ${ALL_ARCHS})
@@ -34,6 +34,12 @@ foreach(arch ${ALL_ARCHS})
 	endif()
 endforeach()
 
+if(WIN32)
+	if(NOT ARCH STREQUAL "win32")
+		message(FATAL_ERROR "To build on a Windows platform, execute the generate_win32.bat file first.  Your project files will be created in the build directory.")
+	endif()
+endif(WIN32)
+
 find_program(ANT_PROGRAM ant)
 find_program(ANDROID_PROGRAM android)
 find_program(JAR_PROGRAM jar)
@@ -41,8 +47,33 @@ find_program(ZIP_PROGRAM zip)
 
 find_substring(ARCH ANDROID_ARCHS IS_ANDROID_ARCH)
 
+######################### WIN32 BUILD #########################
+if(ARCH STREQUAL "win32")
+	project(EnScrypt-win32)
+	set(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
+	set(SRCDIR ${CMAKE_SOURCE_DIR}/src)
+	include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+	configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+	configure_file(${SRCDIR}/enscrypt.h ${CMAKE_CURRENT_BINARY_DIR}/include/enscrypt.h COPYONLY)
+
+	########## Library Target ##########
+	set(LIBSRC ${SRCDIR}/enscrypt.c ${SRCDIR}/realtime.c)
+	add_library(enscrypt SHARED ${LIBSRC})
+
+	########## Binary Target ##########
+	add_executable(enscrypt_bin ${SRCDIR}/enscrypt_bin.c)
+	target_link_libraries(enscrypt_bin enscrypt)
+	add_dependencies(enscrypt_bin enscrypt)
+	set_target_properties(enscrypt_bin PROPERTIES OUTPUT_NAME enscrypt)
+
+	########## Test Target ##########
+	add_executable(enscrypt_test EXCLUDE_FROM_ALL ${SRCDIR}/test.c)
+	target_link_libraries(enscrypt_test enscrypt)
+	add_dependencies(enscrypt_test enscrypt)
+
 ######################### LINUX BUILD #########################
-if(ARCH STREQUAL "linux")
+elseif(ARCH STREQUAL "linux")
 	project(EnScrypt-linux)
 	set(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
 	set(SRCDIR ${CMAKE_SOURCE_DIR}/src)
@@ -63,9 +94,6 @@ if(ARCH STREQUAL "linux")
 	set(LIBSRC ${SRCDIR}/enscrypt.c ${SRCDIR}/realtime.c)
 	add_library(enscrypt SHARED ${LIBSRC})
 	target_link_libraries(enscrypt ${LIBS})
-	add_library(enscrypt_static STATIC ${LIBSRC})
-	target_link_libraries(enscrypt_static ${LIBS})
-	set_target_properties(enscrypt_static PROPERTIES OUTPUT_NAME enscrypt)
 
 	########## Binary Target ##########
 	add_executable(enscrypt_bin ${SRCDIR}/enscrypt_bin.c)
@@ -84,7 +112,7 @@ if(ARCH STREQUAL "linux")
 	add_dependencies(check enscrypt_test)
 
 	########## Install Target ##########
-	install(TARGETS enscrypt enscrypt_bin enscrypt_static 
+	install(TARGETS enscrypt enscrypt_bin
 		LIBRARY DESTINATION lib 
 		ARCHIVE DESTINATION lib
 		RUNTIME DESTINATION bin)
@@ -190,6 +218,7 @@ else()
 		)
 	endif(DOXYGEN_FOUND)
 	
+	unset(ARCHS)
 	if(UNIX)
 		set(ARCHS "linux")
 	endif(UNIX)

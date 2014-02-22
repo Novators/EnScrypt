@@ -14,6 +14,7 @@
 #include <string.h>
 #include <stdio.h>
 
+
 #define ROUNDS 8
 static void
 salsa_core_neon(uint32x4_t *state)
@@ -110,6 +111,16 @@ salsa_core_neon(uint32x4_t *state)
 	state[1] = vcombine_u32(vget_low_u32(x4x5x14x15),vget_high_u32(x12x13x6x7));
 	state[2] = vcombine_u32(vget_low_u32(x8x9x2x3),vget_high_u32(x0x1x10x11));
 	state[3] = vcombine_u32(vget_low_u32(x12x13x6x7),vget_high_u32(x4x5x14x15));
+}
+
+static void
+blkcpy(void *dest, void *src, size_t len)
+{
+	uint32x4_t *D = dest;
+	uint32x4_t *S = src;
+	for( len = (len / 16) - 1; len; len-- ) {
+		D[len] = S[len];
+	}
 }
 
 static void

@@ -27,6 +27,17 @@
 #ifndef ENSCRYPT_H
 #define ENSCRYPT_H
 
+#if defined (_WIN32) 
+	#if defined(enscrypt_EXPORTS)
+		#define  ENSCRYPT_EXPORT __declspec(dllexport)
+	#else
+		#define  ENSCRYPT_EXPORT __declspec(dllimport)
+	#endif /* enscrypt_EXPORTS */
+#else /* defined (_WIN32) */
+	#define ENSCRYPT_EXPORT
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -72,7 +83,7 @@ typedef void (*enscrypt_fatal_errorfn)(const char *msg);
  *
  * @param fn pointer to function of type enscrypt_fatal_errorfn
  **/
-void enscrypt_set_fatal_error(enscrypt_fatal_errorfn fn);
+ENSCRYPT_EXPORT void enscrypt_set_fatal_error(enscrypt_fatal_errorfn fn);
 
 
 /**
@@ -85,7 +96,7 @@ void enscrypt_set_fatal_error(enscrypt_fatal_errorfn fn);
  *
  * @return time in seconds, or -1.0 on error
  **/
-double enscrypt_get_real_time();
+ENSCRYPT_EXPORT double enscrypt_get_real_time();
 
 /**
  * @brief Iteration based enscrypt
@@ -98,7 +109,7 @@ double enscrypt_get_real_time();
  * @param cb_data Pointer to data to send to callback function.
  * @return Execution time (in milliseconds) or -1 on error.
  **/
-int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr, void* cb_data );
+ENSCRYPT_EXPORT int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr, void* cb_data );
 
 /**
  * @brief Time based enscrypt
@@ -111,7 +122,7 @@ int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iteratio
  * @param cb_data Pointer to data to send to callback function.
  * @return Number of iterations performed or -1 on error.
  **/
-int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr, void* cb_data );
+ENSCRYPT_EXPORT int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr, void* cb_data );
 
 #ifdef __cplusplus
 }
