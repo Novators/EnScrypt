@@ -18,3 +18,4 @@ mainpage.dox
 android-toolchain
 clean.sh
 ndk
+.DS_Store

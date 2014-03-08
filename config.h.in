@@ -5,9 +5,12 @@
 #define ENSCRYPT_BUILD @enscrypt_build@
 
 #cmakedefine UNIX
+#cmakedefine BSD
+#cmakedefine MACOS_X
 #cmakedefine CYGWIN
 #cmakedefine CMAKE_COMPILER_IS_GNUCC
 #cmakedefine MSVC
+#cmakedefine CLANG
 
 #if defined WIN32 || defined CYGWIN
   #ifdef CMAKE_COMPILER_IS_GNUCC

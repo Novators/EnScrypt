@@ -138,7 +138,8 @@
 	#define CDECL __attribute__((cdecl))
 	#undef STDCALL
 	#define STDCALL __attribute__((stdcall))
-	#define ALIGN(n) __attribute__((aligned(n)))
+    #undef ALIGN
+    #define ALIGN(n) __attribute__((aligned(n)))
 	#include <stdint.h>
 #endif
 #if defined(__MINGW32__) || defined(__MINGW64__)
