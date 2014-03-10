@@ -206,7 +206,7 @@
     #define GNU_AS3(x, y, z) #x ", " #y ", " #z ";\n"
     #define GNU_AS4(x, y, z, w) #x ", " #y ", " #z ", " #w ";\n"
     #define GNU_ASFN(x) "\n_" #x ":\n" #x ":\n"
-    #define GNU_ASJ(x) ".att_syntax prefix\n" #x "\n.intel_syntax noprefix\n"
+    #define GNU_ASJ(x) #x "\n"
 
     #define a1(x) GNU_AS1(x)
     #define a2(x, y) GNU_AS2(x, y)
@@ -250,27 +250,26 @@
                 "movq 120(%rsp), %rsi;"          \
                 "addq $136, %rsp;"               \
                 "ret;"                           \
-                ".intel_syntax noprefix;"        \
                 ".p2align 4,,15;"                \
                 "1:;"
         #else
-            #define asm_naked_fn(fn) ; __asm__ (".intel_syntax noprefix;\n.text\n" asm_align16 GNU_ASFN(fn)
+            #define asm_naked_fn(fn) ; __asm__ (".att_syntax;\n.text\n" asm_align16 GNU_ASFN(fn)
         #endif
 	#else
 		#define asm_calling_convention STDCALL
 		#define aret(n) a1(ret n)
-		#define asm_naked_fn(fn) ; __asm__ (".intel_syntax noprefix;\n.text\n" asm_align16 GNU_ASFN(fn)
+		#define asm_naked_fn(fn) ; __asm__ (".att_syntax;\n.text\n" asm_align16 GNU_ASFN(fn)
 	#endif
 
 	#define asm_naked_fn_proto(type, fn) extern type asm_calling_convention fn
-	#define asm_naked_fn_end(fn) ".att_syntax prefix;\n" );
+	#define asm_naked_fn_end(fn) ".att_syntax;\n" );
 
-	#define asm_gcc() __asm__ __volatile__(".intel_syntax noprefix;\n"
-	#define asm_gcc_parms() ".att_syntax prefix;"
+	#define asm_gcc() __asm__ __volatile__(".att_syntax;\n"
+	#define asm_gcc_parms() ".att_syntax;"
 	#define asm_gcc_trashed() __asm__ __volatile__("" :::
 	#define asm_gcc_end() );
 #endif
-
+				
 #endif /* X86ASM || X86_64ASM */
 
 
