@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(enscrypt_version_major 1)
 set(enscrypt_version_minor 1)
-set(enscrypt_build 8)
+set(enscrypt_build 9)
 set(enscrypt_version "${enscrypt_version_major}.${enscrypt_version_minor} build ${enscrypt_build}")
 
 set(CMAKE_BUILD_TYPE Release)

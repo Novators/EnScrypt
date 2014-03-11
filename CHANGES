@@ -23,3 +23,5 @@
 		* Added ability to "cancel" from progress callback
 	* build 8
 		* Support for Windows (win32) platform
+	* build 9
+	  * Support for Mac OS
