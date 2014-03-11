@@ -68,9 +68,11 @@ if(ARCH STREQUAL "win32")
 	set_target_properties(enscrypt_bin PROPERTIES OUTPUT_NAME enscrypt)
 
 	########## Test Target ##########
-	add_executable(enscrypt_test EXCLUDE_FROM_ALL ${SRCDIR}/test.c)
-	target_link_libraries(enscrypt_test enscrypt)
-	add_dependencies(enscrypt_test enscrypt)
+	#add_executable(enscrypt_test EXCLUDE_FROM_ALL ${SRCDIR}/test.c)
+	#target_link_libraries(enscrypt_test enscrypt)
+	#add_dependencies(enscrypt_test enscrypt)
+	set(LOAD_TESTS true)
+	
 
 ######################### LINUX BUILD #########################
 elseif(ARCH STREQUAL "linux")
@@ -101,15 +103,7 @@ elseif(ARCH STREQUAL "linux")
 	add_dependencies(enscrypt_bin enscrypt)
 	set_target_properties(enscrypt_bin PROPERTIES OUTPUT_NAME enscrypt)
 
-	########## Test Target ##########
-	enable_testing()
-	add_executable(enscrypt_test EXCLUDE_FROM_ALL ${SRCDIR}/test.c)
-	target_link_libraries(enscrypt_test enscrypt)
-	add_dependencies(enscrypt_test enscrypt)
-	set(CMAKE_CTEST_COMMAND ctest -V)
-	add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-	add_test(test_enscrypt enscrypt_test)
-	add_dependencies(check enscrypt_test)
+	set(LOAD_TESTS true)
 
 	########## Install Target ##########
 	install(TARGETS enscrypt enscrypt_bin
@@ -128,7 +122,7 @@ elseif(ARCH STREQUAL "linux")
 
 ######################### MAC BUILD #########################
 elseif(ARCH STREQUAL "mac")
-		project(EnScrypt-mac)
+		#project(EnScrypt-mac)
 		set(MACOS_X true)
 		unset(UNIX)
 		if("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
@@ -158,15 +152,7 @@ elseif(ARCH STREQUAL "mac")
 		add_dependencies(enscrypt_bin enscrypt)
 		set_target_properties(enscrypt_bin PROPERTIES OUTPUT_NAME enscrypt)
 
-		########## Test Target ##########
-		enable_testing()
-		add_executable(enscrypt_test EXCLUDE_FROM_ALL ${SRCDIR}/test.c)
-		target_link_libraries(enscrypt_test enscrypt)
-		add_dependencies(enscrypt_test enscrypt)
-		set(CMAKE_CTEST_COMMAND ctest -V)
-		add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-		add_test(test_enscrypt enscrypt_test)
-		add_dependencies(check enscrypt_test)
+		set(LOAD_TESTS true)
 
 		########## Install Target ##########
 		install(TARGETS enscrypt enscrypt_bin
@@ -264,6 +250,7 @@ else()
 	configure_file(${CMAKE_SOURCE_DIR}/README.md.in ${CMAKE_SOURCE_DIR}/README.md)
 	configure_file(${CMAKE_SOURCE_DIR}/mainpage.dox.in ${CMAKE_SOURCE_DIR}/mainpage.dox)
 	configure_file(${CMAKE_SOURCE_DIR}/CMakeLists.txt ${CMAKE_SOURCE_DIR}/build/CMakeLists.txt COPYONLY)
+	configure_file(${CMAKE_SOURCE_DIR}/CTestConfig.cmake ${CMAKE_SOURCE_DIR}/build/CTestConfig.cmake COPYONLY)
 	
 	find_package(Doxygen QUIET)
 	if(DOXYGEN_FOUND)
@@ -318,3 +305,18 @@ else()
 	unset(pr_dir)
 	unset(toolchain)
 endif()
+
+if(LOAD_TESTS)
+	include(CTest)
+	add_test(test_1i enscrypt -q 1i)
+	set_tests_properties( test_1i PROPERTIES PASS_REGULAR_EXPRESSION "a8ea62a6e1bfd20e4275011595307aa302645c1801600ef5cd79bf9d884d911c")
+	add_test(test_100i enscrypt -q 100i)
+	set_tests_properties( test_100i PROPERTIES PASS_REGULAR_EXPRESSION "45a42a01709a0012a37b7b6874cf16623543409d19e7740ed96741d2e99aab67")
+	add_test(test_pw123i enscrypt -q password 123i)
+	set_tests_properties( test_pw123i PROPERTIES PASS_REGULAR_EXPRESSION "129d96d1e735618517259416a605be7094c2856a53c14ef7d4e4ba8e4ea36aeb")
+	add_test(test_Npw123i enscrypt -q 123i password 0000000000000000000000000000000000000000000000000000000000000000)
+	set_tests_properties( test_Npw123i PROPERTIES PASS_REGULAR_EXPRESSION "2f30b9d4e5c48056177ff90a6cc9da04b648a7e8451dfa60da56c148187f6a7d")
+	add_test(test_1000i enscrypt -q 1000i)
+	set_tests_properties( test_1000i PROPERTIES PASS_REGULAR_EXPRESSION "3f671adf47d2b1744b1bf9b50248cc71f2a58e8d2b43c76edb1d2a2c200907f5")
+	add_custom_target(check ${CMAKE_CTEST_COMMAND} -D Experimental)
+endif(LOAD_TESTS)
