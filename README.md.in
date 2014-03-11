@@ -24,7 +24,8 @@ EnScrypt is an acceleration-resistant password hashing library and utility based
 ## Supported Platforms
 This implementation is intended to work on multiple platforms.  Tested platforms include:
 * Linux (Ubuntu 32 and 64 bit)
-* Win32 (Tested on Windows 8.1 64bit)
+* Win32 (Tested on Windows 8.1 64 bit)
+* Mac OS X (Tested on 10.9.2 64 bit)
 * Android ARM
 * Android ARM with NEON (optimized implementation with runtime detection of NEON support and fallback)
 
@@ -33,7 +34,6 @@ Compiles, but has not been thoroughly tested on:
 * Android MIPS
 
 Planned, but not yet supported:
-* OSX
 * iOS
 
 ## Building and Installing
