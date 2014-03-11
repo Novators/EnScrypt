@@ -174,102 +174,104 @@
 	#define asm_naked_fn(fn) {
 	#define asm_naked_fn_end(fn) }
 #elif defined(CLANG)
-    #define GNU_AS1(x) #x "\n"
-    #define GNU_AS2(x, y) #x ", " #y "\n"
-    #define GNU_AS3(x, y, z) #x ", " #y ", " #z "\n"
-    #define GNU_AS4(x, y, z, w) #x ", " #y ", " #z ", " #w "\n"
-    #define GNU_ASFN(x) "\n_" #x ":\n" #x ":\n"
-    #define GNU_ASJ(x) #x "\n"
+	#define GNU_AS1(x) #x ";\n"
+	#define GNU_AS2(x, y) #x ", " #y ";\n"
+	#define GNU_AS3(x, y, z) #x ", " #y ", " #z ";\n"
+	#define GNU_AS4(x, y, z, w) #x ", " #y ", " #z ", " #w ";\n"
+	#define GNU_ASFN(x) "\n_" #x ":\n" #x ":\n"
+	#define GNU_ASJ(x) ".att_syntax\n" #x "\n.intel_syntax\n"
 
-    #define a1(x) GNU_AS1(x)
-    #define a2(x, y) GNU_AS2(x, y)
-    #define a3(x, y, z) GNU_AS3(x, y, z)
-    #define a4(x, y, z, w) GNU_AS4(x, y, z, w)
-    #define aj(x) GNU_ASJ(x)
-    #define asm_align8 ".p2align 3,,7"
-    #define asm_align16 ".p2align 4,,15"
+	#define a1(x) GNU_AS1(x)
+	#define a2(x, y) GNU_AS2(x, y)
+	#define a3(x, y, z) GNU_AS3(x, y, z)
+	#define a4(x, y, z, w) GNU_AS4(x, y, z, w)
+	#define aj(x) GNU_ASJ(x)
+	#define asm_align8 ".p2align 3,,7"
+	#define asm_align16 ".p2align 4,,15"
 
-    #define asm_calling_convention STDCALL
-    #define aret(n) a1(ret n)
-    #define asm_naked_fn(fn) ; __asm__ (".att_syntax;\n.text\n" asm_align16 GNU_ASFN(fn)
-    #define asm_naked_fn_proto(type, fn) extern type asm_calling_convention fn
-    #define asm_naked_fn_end(fn) ".att_syntax;\n" );
-
-    #define asm_gcc() __asm__ __volatile__(".att_syntax;\n"
-    #define asm_gcc_parms() ".att_syntax;"
-    #define asm_gcc_trashed() __asm__ __volatile__("" :::
-    #define asm_gcc_end() );
-
-#elif defined(COMPILER_GCC)
-    #define GNU_AS1(x) #x ";\n"
-    #define GNU_AS2(x, y) #x ", " #y ";\n"
-    #define GNU_AS3(x, y, z) #x ", " #y ", " #z ";\n"
-    #define GNU_AS4(x, y, z, w) #x ", " #y ", " #z ", " #w ";\n"
-    #define GNU_ASFN(x) "\n_" #x ":\n" #x ":\n"
-    #define GNU_ASJ(x) #x "\n"
-
-    #define a1(x) GNU_AS1(x)
-    #define a2(x, y) GNU_AS2(x, y)
-    #define a3(x, y, z) GNU_AS3(x, y, z)
-    #define a4(x, y, z, w) GNU_AS4(x, y, z, w)
-    #define aj(x) GNU_ASJ(x)
-    #define asm_align8 ".p2align 3,,7"
-    #define asm_align16 ".p2align 4,,15"
-
-    #if defined(OS_WINDOWS)
-        #define asm_calling_convention CDECL
-        #define aret(n) a1(ret)
-
-        #if defined(X86_64ASM)
-            #define asm_naked_fn(fn) ; __asm__ ( \
-                ".text\n"                        \
-                asm_align16 GNU_ASFN(fn)         \
-                "subq $136, %rsp;"               \
-                "movdqa %xmm6, 0(%rsp);"         \
-                "movdqa %xmm7, 16(%rsp);"        \
-                "movdqa %xmm8, 32(%rsp);"        \
-                "movdqa %xmm9, 48(%rsp);"        \
-                "movdqa %xmm10, 64(%rsp);"       \
-                "movdqa %xmm11, 80(%rsp);"       \
-                "movdqa %xmm12, 96(%rsp);"       \
-                "movq %rdi, 112(%rsp);"          \
-                "movq %rsi, 120(%rsp);"          \
-                "movq %rcx, %rdi;"               \
-                "movq %rdx, %rsi;"               \
-                "movq %r8, %rdx;"                \
-                "movq %r9, %rcx;"                \
-                "call 1f;"                       \
-                "movdqa 0(%rsp), %xmm6;"         \
-                "movdqa 16(%rsp), %xmm7;"        \
-                "movdqa 32(%rsp), %xmm8;"        \
-                "movdqa 48(%rsp), %xmm9;"        \
-                "movdqa 64(%rsp), %xmm10;"       \
-                "movdqa 80(%rsp), %xmm11;"       \
-                "movdqa 96(%rsp), %xmm12;"       \
-                "movq 112(%rsp), %rdi;"          \
-                "movq 120(%rsp), %rsi;"          \
-                "addq $136, %rsp;"               \
-                "ret;"                           \
-                ".p2align 4,,15;"                \
-                "1:;"
-        #else
-            #define asm_naked_fn(fn) ; __asm__ (".att_syntax;\n.text\n" asm_align16 GNU_ASFN(fn)
-        #endif
-	#else
-		#define asm_calling_convention STDCALL
-		#define aret(n) a1(ret n)
-		#define asm_naked_fn(fn) ; __asm__ (".att_syntax;\n.text\n" asm_align16 GNU_ASFN(fn)
-	#endif
-
+	#define asm_calling_convention STDCALL
+	#define aret(n) a1(ret n)		
+	#define asm_naked_fn(fn) ; __asm__ (".intel_syntax;\n.text\n" asm_align16 GNU_ASFN(fn)
 	#define asm_naked_fn_proto(type, fn) extern type asm_calling_convention fn
 	#define asm_naked_fn_end(fn) ".att_syntax;\n" );
 
-	#define asm_gcc() __asm__ __volatile__(".att_syntax;\n"
+	#define asm_gcc() __asm__ __volatile__(".intel_syntax;\n"
 	#define asm_gcc_parms() ".att_syntax;"
 	#define asm_gcc_trashed() __asm__ __volatile__("" :::
 	#define asm_gcc_end() );
+#elif defined(COMPILER_GCC)
+	#define GNU_AS1(x) #x ";\n"
+	#define GNU_AS2(x, y) #x ", " #y ";\n"
+	#define GNU_AS3(x, y, z) #x ", " #y ", " #z ";\n"
+	#define GNU_AS4(x, y, z, w) #x ", " #y ", " #z ", " #w ";\n"
+	#define GNU_ASFN(x) "\n_" #x ":\n" #x ":\n"
+	#define GNU_ASJ(x) ".att_syntax prefix\n" #x "\n.intel_syntax noprefix\n"
+
+	#define a1(x) GNU_AS1(x)
+	#define a2(x, y) GNU_AS2(x, y)
+	#define a3(x, y, z) GNU_AS3(x, y, z)
+	#define a4(x, y, z, w) GNU_AS4(x, y, z, w)
+	#define aj(x) GNU_ASJ(x)
+	#define asm_align8 ".p2align 3,,7"
+	#define asm_align16 ".p2align 4,,15"
+
+	#if defined(OS_WINDOWS)
+		#define asm_calling_convention CDECL
+		#define aret(n) a1(ret)
+
+		#if defined(X86_64ASM)
+			#define asm_naked_fn(fn) ; __asm__ ( \
+				".text\n"                        \
+				asm_align16 GNU_ASFN(fn)         \
+				"subq $136, %rsp;"               \
+			 	"movdqa %xmm6, 0(%rsp);"         \
+				"movdqa %xmm7, 16(%rsp);"        \
+			 	"movdqa %xmm8, 32(%rsp);"        \
+				"movdqa %xmm9, 48(%rsp);"        \
+			 	"movdqa %xmm10, 64(%rsp);"       \
+				"movdqa %xmm11, 80(%rsp);"       \
+				"movdqa %xmm12, 96(%rsp);"       \
+				"movq %rdi, 112(%rsp);"          \
+				"movq %rsi, 120(%rsp);"          \
+				"movq %rcx, %rdi;"               \
+				"movq %rdx, %rsi;"               \
+				"movq %r8, %rdx;"                \
+				"movq %r9, %rcx;"                \
+				"call 1f;"                       \
+				"movdqa 0(%rsp), %xmm6;"         \
+				"movdqa 16(%rsp), %xmm7;"        \
+				"movdqa 32(%rsp), %xmm8;"        \
+				"movdqa 48(%rsp), %xmm9;"        \
+				"movdqa 64(%rsp), %xmm10;"       \
+				"movdqa 80(%rsp), %xmm11;"       \
+				"movdqa 96(%rsp), %xmm12;"       \
+				"movq 112(%rsp), %rdi;"          \
+				"movq 120(%rsp), %rsi;"          \
+				"addq $136, %rsp;"               \
+				"ret;"                           \
+				".intel_syntax noprefix;"        \
+				".p2align 4,,15;"                \
+				"1:;"
+		#else
+			#define asm_naked_fn(fn) ; __asm__ (".intel_syntax noprefix;\n.text\n" asm_align16 GNU_ASFN(fn)
+		#endif
+	#else
+		#define asm_calling_convention STDCALL
+		#define aret(n) a1(ret n)		
+		#define asm_naked_fn(fn) ; __asm__ (".intel_syntax noprefix;\n.text\n" asm_align16 GNU_ASFN(fn)
+	#endif
+
+	#define asm_naked_fn_proto(type, fn) extern type asm_calling_convention fn
+	#define asm_naked_fn_end(fn) ".att_syntax prefix;\n" );
+
+	#define asm_gcc() __asm__ __volatile__(".intel_syntax noprefix;\n"
+	#define asm_gcc_parms() ".att_syntax prefix;"
+	#define asm_gcc_trashed() __asm__ __volatile__("" :::
+	#define asm_gcc_end() );
+#else
+	need x86 asm
 #endif
-				
+
 #endif /* X86ASM || X86_64ASM */
 
 
@@ -289,17 +291,17 @@ typedef struct x86_regs_t {
 asm_naked_fn_proto(int, has_cpuid)(void)
 asm_naked_fn(has_cpuid)
 	a1(pushfd)
-	a1(pop %eax)
-	a2(mov %eax, %ecx)
-	a2(xor $0x200000, %eax)
-	a1(push %eax)
+	a1(pop eax)
+	a2(mov ecx, eax)
+	a2(xor eax, 0x200000)
+	a1(push eax)
 	a1(popfd)
 	a1(pushfd)
-	a1(pop %eax)
-	a2(xor %ecx, %eax)
-	a2(shr $21, %eax)
-	a2(and $1, %eax)
-	a1(push %ecx)
+	a1(pop eax)
+	a2(xor eax, ecx)
+	a2(shr eax, 21)
+	a2(and eax, 1)
+	a1(push ecx)
 	a1(popfd)
 	a1(ret)
 asm_naked_fn_end(has_cpuid)
@@ -311,23 +313,30 @@ get_cpuid(x86_regs *regs, uint32_t flags) {
 #if defined(COMPILER_MSVC)
 	__cpuid((int *)regs, (int)flags);
 #else
-    #if defined(CPU_X86_64)
-        #define cpuid_bx %%rbx
-    #else
-        #define cpuid_bx %%ebx
-    #endif
-    
-    asm_gcc()
-        a1(push cpuid_bx)
-        a2(xorl %%ecx, %%ecx)
-        a1(cpuid)
-        a2(movl %%eax, (%1))
-        a2(movl %%ebx, 4(%1))
-        a2(movl %%ecx, 8(%1))
-        a2(movl %%edx, 12(%1))
-        a1(pop cpuid_bx)
-        : "+a"(flags) : "S" (regs) : "%ecx", "%edx", "cc"
-    asm_gcc_end()
+	#if defined(CPU_X86_64)
+		#define cpuid_bx rbx
+	#else
+		#define cpuid_bx ebx
+	#endif
+
+	asm_gcc()
+		a1(push cpuid_bx)
+		a2(xor ecx, ecx)
+		a1(cpuid)
+#if defined(CLANG)
+		a2(mov [rsi + 0], eax)
+		a2(mov [rsi + 4], ebx)
+		a2(mov [rsi + 8], ecx)
+		a2(mov [rsi + 12], edx)
+#else
+		a2(mov [%1 + 0], eax)
+		a2(mov [%1 + 4], ebx)
+		a2(mov [%1 + 8], ecx)
+		a2(mov [%1 + 12], edx)
+#endif
+		a1(pop cpuid_bx)
+		asm_gcc_parms() : "+a"(flags) : "S"(regs)  : "%ecx", "%edx", "cc"
+	asm_gcc_end()
 #endif
 }
 
