@@ -1,4 +1,4 @@
-# EnScrypt 1.1 build 8
+# EnScrypt 1.1 build 9
 
 EnScrypt is an acceleration-resistant password hashing library and utility based on the memory-hard PBKDF Scrypt.
 

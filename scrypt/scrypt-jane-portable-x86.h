@@ -173,6 +173,32 @@
 	#define asm_naked_fn_proto(type, fn) static NAKED type asm_calling_convention fn
 	#define asm_naked_fn(fn) {
 	#define asm_naked_fn_end(fn) }
+#elif defined(CLANG)
+	#define GNU_AS1(x) #x ";\n"
+	#define GNU_AS2(x, y) #x ", " #y ";\n"
+	#define GNU_AS3(x, y, z) #x ", " #y ", " #z ";\n"
+	#define GNU_AS4(x, y, z, w) #x ", " #y ", " #z ", " #w ";\n"
+	#define GNU_ASFN(x) "\n_" #x ":\n" #x ":\n"
+	#define GNU_ASJ(x) ".att_syntax\n" #x "\n.intel_syntax\n"
+
+	#define a1(x) GNU_AS1(x)
+	#define a2(x, y) GNU_AS2(x, y)
+	#define a3(x, y, z) GNU_AS3(x, y, z)
+	#define a4(x, y, z, w) GNU_AS4(x, y, z, w)
+	#define aj(x) GNU_ASJ(x)
+	#define asm_align8 ".p2align 3,,7"
+	#define asm_align16 ".p2align 4,,15"
+
+	#define asm_calling_convention STDCALL
+	#define aret(n) a1(ret n)		
+	#define asm_naked_fn(fn) ; __asm__ (".intel_syntax;\n.text\n" asm_align16 GNU_ASFN(fn)
+	#define asm_naked_fn_proto(type, fn) extern type asm_calling_convention fn
+	#define asm_naked_fn_end(fn) ".att_syntax;\n" );
+
+	#define asm_gcc() __asm__ __volatile__(".intel_syntax;\n"
+	#define asm_gcc_parms() ".att_syntax;"
+	#define asm_gcc_trashed() __asm__ __volatile__("" :::
+	#define asm_gcc_end() );
 #elif defined(COMPILER_GCC)
 	#define GNU_AS1(x) #x ";\n"
 	#define GNU_AS2(x, y) #x ", " #y ";\n"
@@ -297,10 +323,17 @@ get_cpuid(x86_regs *regs, uint32_t flags) {
 		a1(push cpuid_bx)
 		a2(xor ecx, ecx)
 		a1(cpuid)
+#if defined(CLANG)
+		a2(mov [rsi + 0], eax)
+		a2(mov [rsi + 4], ebx)
+		a2(mov [rsi + 8], ecx)
+		a2(mov [rsi + 12], edx)
+#else
 		a2(mov [%1 + 0], eax)
 		a2(mov [%1 + 4], ebx)
 		a2(mov [%1 + 8], ecx)
 		a2(mov [%1 + 12], edx)
+#endif
 		a1(pop cpuid_bx)
 		asm_gcc_parms() : "+a"(flags) : "S"(regs)  : "%ecx", "%edx", "cc"
 	asm_gcc_end()

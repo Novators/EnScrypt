@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(enscrypt_version_major 1)
 set(enscrypt_version_minor 1)
-set(enscrypt_build 8)
+set(enscrypt_build 9)
 set(enscrypt_version "${enscrypt_version_major}.${enscrypt_version_minor} build ${enscrypt_build}")
 
 set(CMAKE_BUILD_TYPE Release)
@@ -25,7 +25,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif()
 
 ########## Platform Tests ##########
-set(ALL_ARCHS "win32" "linux" "armeabi" "armeabi-v7a" "x86" "mips" "android")
+set(ALL_ARCHS "mac" "win32" "linux" "armeabi" "armeabi-v7a" "x86" "mips" "android")
 set(ANDROID_ARCHS "armeabi" "armeabi-v7a" "x86" "mips")
 
 foreach(arch ${ALL_ARCHS})
@@ -126,6 +126,62 @@ elseif(ARCH STREQUAL "linux")
 	ADD_CUSTOM_TARGET(uninstall
 		"${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake_uninstall.cmake")
 
+######################### MAC BUILD #########################
+elseif(ARCH STREQUAL "mac")
+		project(EnScrypt-mac)
+		set(MACOS_X true)
+		unset(UNIX)
+		if("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+			set(CLANG true)
+		endif()
+		set(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
+		set(SRCDIR ${CMAKE_SOURCE_DIR}/src)
+		include_directories(${CMAKE_CURRENT_BINARY_DIR})
+		set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+		set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+		set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+		if(CMAKE_COMPILER_IS_GNUCC)
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+		endif(CMAKE_COMPILER_IS_GNUCC)
+
+		configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+		configure_file(${SRCDIR}/enscrypt.h ${CMAKE_CURRENT_BINARY_DIR}/include/enscrypt.h COPYONLY)
+
+		########## Library Target ##########
+		set(LIBSRC ${SRCDIR}/enscrypt.c ${SRCDIR}/realtime.c)
+		add_library(enscrypt SHARED ${LIBSRC})
+		target_link_libraries(enscrypt ${LIBS})
+
+		########## Binary Target ##########
+		add_executable(enscrypt_bin ${SRCDIR}/enscrypt_bin.c)
+		target_link_libraries(enscrypt_bin enscrypt)
+		add_dependencies(enscrypt_bin enscrypt)
+		set_target_properties(enscrypt_bin PROPERTIES OUTPUT_NAME enscrypt)
+
+		########## Test Target ##########
+		enable_testing()
+		add_executable(enscrypt_test EXCLUDE_FROM_ALL ${SRCDIR}/test.c)
+		target_link_libraries(enscrypt_test enscrypt)
+		add_dependencies(enscrypt_test enscrypt)
+		set(CMAKE_CTEST_COMMAND ctest -V)
+		add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+		add_test(test_enscrypt enscrypt_test)
+		add_dependencies(check enscrypt_test)
+
+		########## Install Target ##########
+		install(TARGETS enscrypt enscrypt_bin
+			LIBRARY DESTINATION lib 
+			ARCHIVE DESTINATION lib
+			RUNTIME DESTINATION bin)
+		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/enscrypt.h DESTINATION include)
+		########## Uninstall Target ##########
+		CONFIGURE_FILE(
+			"${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+			"${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake_uninstall.cmake"
+			IMMEDIATE @ONLY)
+		ADD_CUSTOM_TARGET(uninstall
+			"${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake_uninstall.cmake")
+
 ######################### ANDROID BUILD #########################
 elseif(ARCH STREQUAL "android")
 	project(EnScrypt-${ARCH})
@@ -219,9 +275,11 @@ else()
 	endif(DOXYGEN_FOUND)
 	
 	unset(ARCHS)
-	if(UNIX)
+	if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+		set(ARCHS "mac")
+	elseif(UNIX)
 		set(ARCHS "linux")
-	endif(UNIX)
+	endif()
 
 	if(EXISTS "${CMAKE_SOURCE_DIR}/ndk")
 		if(ANT_PROGRAM)

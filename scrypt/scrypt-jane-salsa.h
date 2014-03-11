@@ -11,6 +11,7 @@ typedef uint32_t scrypt_mix_word_t;
 /* must have these here in case block bytes is ever != 64 */
 #include "scrypt-jane-romix-basic.h"
 
+
 #include "scrypt-jane-mix_salsa-xop.h"
 #include "scrypt-jane-mix_salsa-avx.h"
 #include "scrypt-jane-mix_salsa-sse2.h"
