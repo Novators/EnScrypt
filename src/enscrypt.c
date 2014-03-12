@@ -133,7 +133,7 @@ int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iter
 	startTime = enscrypt_get_real_time();
 	for( i = 0; i < iterations; i++ ) {
 		if( cb_ptr ) {
-			if( lp != (p= i / iterations * 100) ) {
+			if( lp != (p= (int)(i / iterations * 100))) {
 				go = (*cb_ptr)( p, cb_data );
 				lp = p;
 			}
@@ -217,7 +217,7 @@ int enscrypt_ms(uint8_t *buf, const char *password, const uint8_t *saltIn, int m
 	startTime = enscrypt_get_real_time();
 	while( elapsed < millis ) {
 		if( cb_ptr ) {
-			if( lp != (p= elapsed / millis * 100) ) {
+			if( lp != (p= (int)(elapsed / millis * 100))) {
 				go = (*cb_ptr)( p, cb_data );
 				lp = p;
 			}

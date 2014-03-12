@@ -49,7 +49,6 @@ find_substring(ARCH ANDROID_ARCHS IS_ANDROID_ARCH)
 
 ######################### WIN32 BUILD #########################
 if(ARCH STREQUAL "win32")
-	project(EnScrypt-win32)
 	set(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
 	set(SRCDIR ${CMAKE_SOURCE_DIR}/src)
 	include_directories(${CMAKE_CURRENT_BINARY_DIR})
