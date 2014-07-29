@@ -96,6 +96,10 @@ elseif(ARCH STREQUAL "linux")
 	add_library(enscrypt SHARED ${LIBSRC})
 	target_link_libraries(enscrypt ${LIBS})
 
+	add_library(enscrypt_static STATIC ${LIBSRC})
+	target_link_libraries(enscrypt_static ${LIBS})
+	set_target_properties(enscrypt_static PROPERTIES OUTPUT_NAME enscrypt)
+
 	########## Binary Target ##########
 	add_executable(enscrypt_bin ${SRCDIR}/enscrypt_bin.c)
 	target_link_libraries(enscrypt_bin enscrypt)
@@ -105,7 +109,7 @@ elseif(ARCH STREQUAL "linux")
 	set(LOAD_TESTS true)
 
 	########## Install Target ##########
-	install(TARGETS enscrypt enscrypt_bin
+	install(TARGETS enscrypt enscrypt_static enscrypt_bin
 		LIBRARY DESTINATION lib 
 		ARCHIVE DESTINATION lib
 		RUNTIME DESTINATION bin)
@@ -145,6 +149,10 @@ elseif(ARCH STREQUAL "mac")
 		add_library(enscrypt SHARED ${LIBSRC})
 		target_link_libraries(enscrypt ${LIBS})
 
+		add_library(enscrypt_static STATIC ${LIBSRC})
+		target_link_libraries(enscrypt_static ${LIBS})
+		set_target_properties(enscrypt_static PROPERTIES OUTPUT_NAME enscrypt)
+
 		########## Binary Target ##########
 		add_executable(enscrypt_bin ${SRCDIR}/enscrypt_bin.c)
 		target_link_libraries(enscrypt_bin enscrypt)
@@ -154,7 +162,7 @@ elseif(ARCH STREQUAL "mac")
 		set(LOAD_TESTS true)
 
 		########## Install Target ##########
-		install(TARGETS enscrypt enscrypt_bin
+		install(TARGETS enscrypt enscrypt_static enscrypt_bin
 			LIBRARY DESTINATION lib 
 			ARCHIVE DESTINATION lib
 			RUNTIME DESTINATION bin)
