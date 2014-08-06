@@ -62,8 +62,8 @@ Documentation is available in the enscrypt.h header, or in HTML in the doc direc
 Typically, you'll just need two functions from the library, enscrypt() and enscrypt_ms().  They look like this:
 
 ```
-int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, enscrypt_progress_fn cb_ptr );
-int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, enscrypt_progress_fn cb_ptr );
+int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data );
+int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data );
 ```
 
 To run 100 iterations:
