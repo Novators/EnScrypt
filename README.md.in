@@ -76,7 +76,7 @@ int main()
   uint8_t buf[32];
   uint8_t salt[32] = {0};
   
-  time_elapsed = enscrypt( buf, "password", salt, 100, NULL );
+  time_elapsed = enscrypt( buf, "password", salt, 100, 9, NULL, NULL );
 }
 ```
 
@@ -90,7 +90,7 @@ int main()
   uint8_t buf[32];
   uint8_t salt[32] = {0};
   
-  iteration_count = enscrypt_ms( buf, "password", salt, 5000, NULL );
+  iteration_count = enscrypt_ms( buf, "password", salt, 5000, 9, NULL, NULL );
 }
 ```
 
@@ -107,7 +107,7 @@ int main()
 {
   uint8_t buf[32];
   
-  enscrypt( buf, NULL, NULL, 100, progress_fn );
+  enscrypt( buf, NULL, NULL, 100, 9, progress_fn, NULL );
 }
 ```
 

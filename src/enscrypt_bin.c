@@ -26,6 +26,8 @@
  * 
  **/
 
+#define N_FACTOR 9
+
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -192,12 +194,12 @@ int main( int argc, char *argv[] )
 
 	startTime = enscrypt_get_real_time();
 	if( iterations ) {
-		retVal = enscrypt( result, password, salt, iterations, progress, NULL );
+		retVal = enscrypt( result, password, salt, iterations, N_FACTOR, progress, NULL );
 	} else if( duration ) {
-		iterations = retVal = enscrypt_ms( result, password, salt, duration * 1000, progress, NULL );
+		iterations = retVal = enscrypt_ms( result, password, salt, duration * 1000, N_FACTOR, progress, NULL );
 	} else {
 		iterations = 1;
-		retVal = enscrypt( result, password, salt, iterations, progress, NULL );
+		retVal = enscrypt( result, password, salt, iterations, N_FACTOR, progress, NULL );
 	}
 	endTime = enscrypt_get_real_time();
 	elapsed = endTime - startTime;

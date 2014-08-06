@@ -90,14 +90,13 @@ scrypt_free(scrypt_aligned_alloc *aa) {
 	free(aa->mem);
 }
 
-#define ENSCRYPT_N 512
 #define ENSCRYPT_R 256
 #define ENSCRYPT_CHUNK_BYTES 32768
 #define ENSCRYPT_YX_BYTES 65536
 #define ENSCRYPT_V_BYTES 16777216
 
 DLL_PUBLIC
-int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iterations, enscrypt_progress_fn cb_ptr, void *cb_data )
+int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iterations, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data )
 {
 	scrypt_ROMixfn scrypt_ROMix = scrypt_getROMix();
 	uint8_t *salt = NULL;
@@ -109,6 +108,7 @@ int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iter
 	
 	if( !buf ) return -1;
 	if( iterations < 1 ) return -1;
+	if( n_factor < 0 || n_factor > scrypt_maxNfactor ) return -1;
 
 	if( saltIn ) {
 		salt = malloc( 32 );
@@ -143,7 +143,7 @@ int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iter
 		scrypt_pbkdf2((uint8_t*)password, password_len, salt, salt_len, 1, X, ENSCRYPT_CHUNK_BYTES);
 		
 		/* 2: X = ROMix(X) */
-		scrypt_ROMix((scrypt_mix_word_t *)X, (scrypt_mix_word_t *)Y, (scrypt_mix_word_t *)V.ptr, ENSCRYPT_N, ENSCRYPT_R);
+		scrypt_ROMix((scrypt_mix_word_t *)X, (scrypt_mix_word_t *)Y, (scrypt_mix_word_t *)V.ptr, (1 << n_factor), ENSCRYPT_R);
 		
 		if( !salt ) {
 			salt = malloc( 32 );
@@ -176,7 +176,7 @@ int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iter
 }
 
 DLL_PUBLIC
-int enscrypt_ms(uint8_t *buf, const char *password, const uint8_t *saltIn, int millis, enscrypt_progress_fn cb_ptr, void *cb_data )
+int enscrypt_ms(uint8_t *buf, const char *password, const uint8_t *saltIn, int millis, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data )
 {
 	#if !defined(SCRYPT_CHOOSE_COMPILETIME)
 	scrypt_ROMixfn scrypt_ROMix = scrypt_getROMix();
@@ -193,6 +193,7 @@ int enscrypt_ms(uint8_t *buf, const char *password, const uint8_t *saltIn, int m
 	
 	if( !buf ) return -1;
 	if( millis < 1 ) return -1;
+	if( n_factor < 0 || n_factor > scrypt_maxNfactor ) return -1;
 	
 	if( saltIn ) {
 		salt = malloc( 32 );
@@ -227,7 +228,7 @@ int enscrypt_ms(uint8_t *buf, const char *password, const uint8_t *saltIn, int m
 		scrypt_pbkdf2((uint8_t*)password, password_len, salt, salt_len, 1, X, ENSCRYPT_CHUNK_BYTES);
 		
 		/* 2: X = ROMix(X) */
-		scrypt_ROMix((scrypt_mix_word_t *)X, (scrypt_mix_word_t *)Y, (scrypt_mix_word_t *)V.ptr, ENSCRYPT_N, ENSCRYPT_R);
+		scrypt_ROMix((scrypt_mix_word_t *)X, (scrypt_mix_word_t *)Y, (scrypt_mix_word_t *)V.ptr, (1 << n_factor), ENSCRYPT_R);
 		
 		if( !salt ) {
 			salt = malloc( 32 );

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(enscrypt_version_major 1)
 set(enscrypt_version_minor 1)
-set(enscrypt_build 9)
+set(enscrypt_build 10)
 set(enscrypt_version "${enscrypt_version_major}.${enscrypt_version_minor} build ${enscrypt_build}")
 
 set(CMAKE_BUILD_TYPE Release)
@@ -125,7 +125,7 @@ elseif(ARCH STREQUAL "linux")
 
 ######################### MAC BUILD #########################
 elseif(ARCH STREQUAL "mac")
-		#project(EnScrypt-mac)
+		project(EnScrypt-mac)
 		set(MACOS_X true)
 		unset(UNIX)
 		if("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")

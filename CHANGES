@@ -25,3 +25,5 @@
 		* Support for Windows (win32) platform
 	* build 9
 	  * Support for Mac OS
+	* build 10
+	  * Added n_factor inputs
