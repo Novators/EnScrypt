@@ -72,7 +72,7 @@ JNIEXPORT jint JNICALL Java_com_sqrlauth_enscrypt_Enscrypt_enscrypt_1ms
 	}
 	if( salt ) {
 		s_ln = (*env)->GetArrayLength( env, salt );
-		if( s_ln != 32 ) return -1;
+		if( s_ln > 32 ) return -1;
 	}
 	d.env = env;
 	d.obj = jobj;
@@ -93,9 +93,9 @@ JNIEXPORT jint JNICALL Java_com_sqrlauth_enscrypt_Enscrypt_enscrypt_1ms
 	}
 	
 	if( p_ln ) {
-		retVal = enscrypt_ms(mBuf, mPass, mSalt, millis, progressFn, &d );
+		retVal = enscrypt_ms(mBuf, mPass, p_ln, mSalt, s_ln, millis, progressFn, &d );
 	} else {
-		retVal = enscrypt_ms(mBuf, NULL, mSalt, millis, progressFn, &d );
+		retVal = enscrypt_ms(mBuf, NULL, 0, mSalt, s_ln, millis, progressFn, &d );
 	}
 	
 	(*env)->ReleaseByteArrayElements(env, buf, (jbyte*)mBuf, 0);
@@ -132,7 +132,7 @@ JNIEXPORT jint JNICALL Java_com_sqrlauth_enscrypt_Enscrypt_enscrypt
 	}
 	if( salt ) {
 		s_ln = (*env)->GetArrayLength( env, salt );
-		if( s_ln != 32 ) return -4;
+		if( s_ln > 32 ) return -4;
 	}
 	d.env = env;
 	d.obj = jobj;
@@ -153,9 +153,9 @@ JNIEXPORT jint JNICALL Java_com_sqrlauth_enscrypt_Enscrypt_enscrypt
 	}
 	
 	if( p_ln ) {
-		retVal = enscrypt(mBuf, mPass, mSalt, iterations, progressFn, &d );
+		retVal = enscrypt(mBuf, mPass, p_ln, mSalt, s_ln, iterations, progressFn, &d );
 	} else {
-		retVal = enscrypt(mBuf, NULL, mSalt, iterations, progressFn, &d );
+		retVal = enscrypt(mBuf, NULL, 0, mSalt, s_ln, iterations, progressFn, &d );
 	}
 	
 	(*env)->ReleaseByteArrayElements(env, buf, (jbyte*)mBuf, 0);

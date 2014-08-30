@@ -52,7 +52,6 @@
 #include "../scrypt/scrypt-jane-romix.h"
 
 #include <stdio.h>
-//#include <malloc.h>
 
 static void //NORETURN
 scrypt_fatal_error_default(const char *msg) {
@@ -96,25 +95,32 @@ scrypt_free(scrypt_aligned_alloc *aa) {
 #define ENSCRYPT_V_BYTES 16777216
 
 DLL_PUBLIC
-int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iterations, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data )
+int enscrypt(
+	uint8_t *buf, 
+	const char *password, 
+	size_t password_len,
+	const uint8_t *saltIn, 
+	size_t salt_len,
+	int iterations, 
+	int n_factor, 
+	enscrypt_progress_fn cb_ptr, 
+	void *cb_data )
 {
 	scrypt_ROMixfn scrypt_ROMix = scrypt_getROMix();
 	uint8_t *salt = NULL;
-	size_t password_len = password ? strlen(password) : 0;
-	size_t salt_len = salt ? 32 : 0;
-	
+
 	double i, startTime, endTime;
 	int p = 0, lp = -1, go = 1;
 	
 	if( !buf ) return -1;
+	if( salt_len > 32 ) return -1;
 	if( iterations < 1 ) return -1;
 	if( n_factor < 0 || n_factor > scrypt_maxNfactor ) return -1;
 
 	if( saltIn ) {
 		salt = malloc( 32 );
 		if( salt ) {
-			memcpy( salt, saltIn, 32 );
-			salt_len = 32;
+			memcpy( salt, saltIn, salt_len );
 		} else {
 			return -1;
 		}
@@ -122,16 +128,25 @@ int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iter
 		salt = NULL;
 		salt_len = 0;
 	}
-	
-	
+		
 	scrypt_aligned_alloc V = scrypt_alloc( ENSCRYPT_V_BYTES );
 	scrypt_aligned_alloc YX = scrypt_alloc( ENSCRYPT_YX_BYTES );
 	uint8_t *Y = YX.ptr;
 	uint8_t *X = Y + ENSCRYPT_CHUNK_BYTES;
-
 	memset( buf, 0, 32 );
 	startTime = enscrypt_get_real_time();
-	for( i = 0; i < iterations; i++ ) {
+
+
+	scrypt_pbkdf2((uint8_t*)password, password_len, salt, salt_len, 1, X, ENSCRYPT_CHUNK_BYTES);
+	scrypt_ROMix((scrypt_mix_word_t *)X, (scrypt_mix_word_t *)Y, (scrypt_mix_word_t *)V.ptr, (1 << n_factor), ENSCRYPT_R);
+	if( !salt ) {
+		salt = malloc( 32 );
+	}
+	salt_len = 32;
+	scrypt_pbkdf2((uint8_t*)password, password_len, X, ENSCRYPT_CHUNK_BYTES, 1, salt, 32);
+	memcpy( buf, salt, 32 );
+
+	for( i = 1; i < iterations; i++ ) {
 		if( cb_ptr ) {
 			if( lp != (p= (int)(i / iterations * 100))) {
 				go = (*cb_ptr)( p, cb_data );
@@ -139,18 +154,13 @@ int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iter
 			}
 			if( go == 0 ) break;
 		}
-		/* 1: X = PBKDF2(password, salt) */
+		// 1: X = PBKDF2(password, salt)
 		scrypt_pbkdf2((uint8_t*)password, password_len, salt, salt_len, 1, X, ENSCRYPT_CHUNK_BYTES);
 		
-		/* 2: X = ROMix(X) */
+		// 2: X = ROMix(X)
 		scrypt_ROMix((scrypt_mix_word_t *)X, (scrypt_mix_word_t *)Y, (scrypt_mix_word_t *)V.ptr, (1 << n_factor), ENSCRYPT_R);
 		
-		if( !salt ) {
-			salt = malloc( 32 );
-			salt_len = 32;
-		}
-		
-		/* 3: Out = PBKDF2(password, X) */
+		// 3: Out = PBKDF2(password, X)
 		scrypt_pbkdf2((uint8_t*)password, password_len, X, ENSCRYPT_CHUNK_BYTES, 1, salt, 32);
 		
 		((uint64_t*)buf)[0] ^= ((uint64_t*)salt)[0];
@@ -161,6 +171,7 @@ int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iter
 
 	if( go && cb_ptr ) (*cb_ptr)( 100, cb_data );
 	endTime = enscrypt_get_real_time() - startTime;
+
 	if( salt && salt != saltIn ) {
 		free( salt );
 	}
@@ -176,7 +187,16 @@ int enscrypt(uint8_t *buf, const char *password, const uint8_t *saltIn, int iter
 }
 
 DLL_PUBLIC
-int enscrypt_ms(uint8_t *buf, const char *password, const uint8_t *saltIn, int millis, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data )
+int enscrypt_ms(
+	uint8_t *buf, 
+	const char *password, 
+	size_t password_len,
+	const uint8_t *saltIn, 
+	size_t salt_len,
+	int millis, 
+	int n_factor, 
+	enscrypt_progress_fn cb_ptr, 
+	void *cb_data )
 {
 	#if !defined(SCRYPT_CHOOSE_COMPILETIME)
 	scrypt_ROMixfn scrypt_ROMix = scrypt_getROMix();
@@ -184,22 +204,20 @@ int enscrypt_ms(uint8_t *buf, const char *password, const uint8_t *saltIn, int m
 	scrypt_ROMixfn scrypt_ROMix = scrypt_ROMix;
 	#endif
 	uint8_t *salt = NULL;
-	size_t password_len = password ? strlen(password) : 0;
-	size_t salt_len = salt ? 32 : 0;
 	
 	double startTime, elapsed = 0.0;
 	int i = 0;
 	int p = 0, lp = -1, go = 1;
 	
 	if( !buf ) return -1;
+	if( salt_len > 32 ) return -1;
 	if( millis < 1 ) return -1;
 	if( n_factor < 0 || n_factor > scrypt_maxNfactor ) return -1;
 	
 	if( saltIn ) {
 		salt = malloc( 32 );
 		if( salt ) {
-			memcpy( salt, saltIn, 32 );
-			salt_len = 32;
+			memcpy( salt, saltIn, salt_len );
 		} else {
 			return -1;
 		}
@@ -216,6 +234,16 @@ int enscrypt_ms(uint8_t *buf, const char *password, const uint8_t *saltIn, int m
 	
 	memset( buf, 0, 32 );
 	startTime = enscrypt_get_real_time();
+
+	scrypt_pbkdf2((uint8_t*)password, password_len, salt, salt_len, 1, X, ENSCRYPT_CHUNK_BYTES);
+	scrypt_ROMix((scrypt_mix_word_t *)X, (scrypt_mix_word_t *)Y, (scrypt_mix_word_t *)V.ptr, (1 << n_factor), ENSCRYPT_R);
+	if( !salt ) {
+		salt = malloc( 32 );
+	}
+	salt_len = 32;
+	scrypt_pbkdf2((uint8_t*)password, password_len, X, ENSCRYPT_CHUNK_BYTES, 1, salt, 32);
+	memcpy( buf, salt, 32 );
+
 	while( elapsed < millis ) {
 		if( cb_ptr ) {
 			if( lp != (p= (int)(elapsed / millis * 100))) {
@@ -229,11 +257,6 @@ int enscrypt_ms(uint8_t *buf, const char *password, const uint8_t *saltIn, int m
 		
 		/* 2: X = ROMix(X) */
 		scrypt_ROMix((scrypt_mix_word_t *)X, (scrypt_mix_word_t *)Y, (scrypt_mix_word_t *)V.ptr, (1 << n_factor), ENSCRYPT_R);
-		
-		if( !salt ) {
-			salt = malloc( 32 );
-			salt_len = 32;
-		}
 		
 		/* 3: Out = PBKDF2(password, X) */
 		scrypt_pbkdf2((uint8_t*)password, password_len, X, ENSCRYPT_CHUNK_BYTES, 1, salt, 32);

@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">EnScrypt
-   &#160;<span id="projectnumber">1.1build10</span>
+   &#160;<span id="projectnumber">1.2build1</span>
    </div>
    <div id="projectbrief">Scrypt based password hashing</div>
   </td>
@@ -112,12 +112,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ad45d27f5446bc67a038e6a4394562641"><td class="memItemLeft" align="right" valign="top">ENSCRYPT_EXPORT double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#ad45d27f5446bc67a038e6a4394562641">enscrypt_get_real_time</a> ()</td></tr>
 <tr class="memdesc:ad45d27f5446bc67a038e6a4394562641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a value representing execution time.  <a href="#ad45d27f5446bc67a038e6a4394562641">More...</a><br /></td></tr>
 <tr class="separator:ad45d27f5446bc67a038e6a4394562641"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d414c1fd33c885508ee7e05ad6e8118"><td class="memItemLeft" align="right" valign="top">ENSCRYPT_EXPORT int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#a0d414c1fd33c885508ee7e05ad6e8118">enscrypt</a> (uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, int n_factor, <a class="el" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7">enscrypt_progress_fn</a> cb_ptr, void *cb_data)</td></tr>
-<tr class="memdesc:a0d414c1fd33c885508ee7e05ad6e8118"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iteration based enscrypt.  <a href="#a0d414c1fd33c885508ee7e05ad6e8118">More...</a><br /></td></tr>
-<tr class="separator:a0d414c1fd33c885508ee7e05ad6e8118"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9a1fe3d00195f1b5416809d27d05650"><td class="memItemLeft" align="right" valign="top">ENSCRYPT_EXPORT int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#af9a1fe3d00195f1b5416809d27d05650">enscrypt_ms</a> (uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, int n_factor, <a class="el" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7">enscrypt_progress_fn</a> cb_ptr, void *cb_data)</td></tr>
-<tr class="memdesc:af9a1fe3d00195f1b5416809d27d05650"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time based enscrypt.  <a href="#af9a1fe3d00195f1b5416809d27d05650">More...</a><br /></td></tr>
-<tr class="separator:af9a1fe3d00195f1b5416809d27d05650"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e23247fa73442afe960fdd6c58e5e1f"><td class="memItemLeft" align="right" valign="top">ENSCRYPT_EXPORT int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#a8e23247fa73442afe960fdd6c58e5e1f">enscrypt</a> (uint8_t *buf, const char *passwd, size_t passwd_len, const uint8_t *salt, size_t salt_len, int iterations, int n_factor, <a class="el" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7">enscrypt_progress_fn</a> cb_ptr, void *cb_data)</td></tr>
+<tr class="memdesc:a8e23247fa73442afe960fdd6c58e5e1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iteration based enscrypt.  <a href="#a8e23247fa73442afe960fdd6c58e5e1f">More...</a><br /></td></tr>
+<tr class="separator:a8e23247fa73442afe960fdd6c58e5e1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e3cdd51b7f003fc11cde8dc65c4c016"><td class="memItemLeft" align="right" valign="top">ENSCRYPT_EXPORT int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enscrypt_8h.html#a6e3cdd51b7f003fc11cde8dc65c4c016">enscrypt_ms</a> (uint8_t *buf, const char *passwd, size_t passwd_len, const uint8_t *salt, size_t salt_len, int millis, int n_factor, <a class="el" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7">enscrypt_progress_fn</a> cb_ptr, void *cb_data)</td></tr>
+<tr class="memdesc:a6e3cdd51b7f003fc11cde8dc65c4c016"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time based enscrypt.  <a href="#a6e3cdd51b7f003fc11cde8dc65c4c016">More...</a><br /></td></tr>
+<tr class="separator:a6e3cdd51b7f003fc11cde8dc65c4c016"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>EnScrypt, a Scrypt based password hashing library.</p>
@@ -218,7 +218,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a0d414c1fd33c885508ee7e05ad6e8118"></a>
+<a class="anchor" id="a8e23247fa73442afe960fdd6c58e5e1f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -237,8 +237,20 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>passwd_len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const uint8_t *&#160;</td>
           <td class="paramname"><em>salt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>salt_len</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -276,8 +288,10 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">buf</td><td>A 32 byte buffer to receive the result. </td></tr>
-    <tr><td class="paramname">passwd</td><td>null-terminated password, or NULL. </td></tr>
-    <tr><td class="paramname">salt</td><td>32 byte buffer containing the salt, or NULL. </td></tr>
+    <tr><td class="paramname">passwd</td><td>buffer containing password, or NULL. </td></tr>
+    <tr><td class="paramname">passwd_len</td><td>length of password. </td></tr>
+    <tr><td class="paramname">salt</td><td>buffer containing the salt, or NULL. </td></tr>
+    <tr><td class="paramname">salt_len</td><td>length of salt. </td></tr>
     <tr><td class="paramname">iterations</td><td>Number of iterations; must be &gt; 0. </td></tr>
     <tr><td class="paramname">n_factor</td><td>Scrypt n factor (recommend 9) </td></tr>
     <tr><td class="paramname">cb_ptr</td><td>Pointer to an enscrypt_progress_fn, or NULL. </td></tr>
@@ -289,7 +303,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af9a1fe3d00195f1b5416809d27d05650"></a>
+<a class="anchor" id="a6e3cdd51b7f003fc11cde8dc65c4c016"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -308,8 +322,20 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>passwd_len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const uint8_t *&#160;</td>
           <td class="paramname"><em>salt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>salt_len</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

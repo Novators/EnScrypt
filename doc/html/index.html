@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">EnScrypt
-   &#160;<span id="projectnumber">1.1build10</span>
+   &#160;<span id="projectnumber">1.2build1</span>
    </div>
    <div id="projectbrief">Scrypt based password hashing</div>
   </td>
@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">EnScrypt </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><dl class="section version"><dt>Version</dt><dd>1.1 build 10 </dd></dl>
+<div class="textblock"><dl class="section version"><dt>Version</dt><dd>1.2 build 1 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Adam Comley</dd></dl>
 <p>EnScrypt is an acceleration-resistant password hashing library and utility based on the memory-hard PBKDF Scrypt.</p>
 <p>Based on:</p>
@@ -128,7 +128,7 @@ Building and Installing</h1>
 <h1><a class="anchor" id="utility"></a>
 Using the command line utility</h1>
 <p>The command line utility is substantially similar to Steve Gibson's <a href="https://www.grc.com/sqrl/scrypt.htm">reference implementation</a>. Normal use is almost identical:</p>
-<div class="fragment"><div class="line"><a class="code" href="enscrypt_8h.html#a0d414c1fd33c885508ee7e05ad6e8118">enscrypt</a> [-q] [password] [salt] [iteration_count | duration]</div>
+<div class="fragment"><div class="line"><a class="code" href="enscrypt_8h.html#a8e23247fa73442afe960fdd6c58e5e1f">enscrypt</a> [-q] [password] [salt] [iteration_count | duration]</div>
 </div><!-- fragment --><p>All arguments are optional, and order is arbitrary. This implementation adds the "-q" and "-h" options.</p>
 <ul>
 <li>duration: An integer + 's' or 'S'. For example, "5s" == 5 seconds.</li>
@@ -143,9 +143,9 @@ Using the library</h1>
 <p>Documentation is available in the <a class="el" href="enscrypt_8h.html">enscrypt.h</a> header, or in HTML in the doc directory.</p>
 <h2><a class="anchor" id="basiclib"></a>
 Basic Use</h2>
-<p>Typically, you'll just need two functions from the library, <a class="el" href="enscrypt_8h.html#a0d414c1fd33c885508ee7e05ad6e8118" title="Iteration based enscrypt. ">enscrypt()</a> and <a class="el" href="enscrypt_8h.html#af9a1fe3d00195f1b5416809d27d05650" title="Time based enscrypt. ">enscrypt_ms()</a>. They look like this:</p>
-<div class="fragment"><div class="line"><span class="keywordtype">int</span> <a class="code" href="enscrypt_8h.html#a0d414c1fd33c885508ee7e05ad6e8118">enscrypt</a>(uint8_t *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *passwd, <span class="keyword">const</span> uint8_t *salt, <span class="keywordtype">int</span> iterations, <span class="keywordtype">int</span> n_factor, <a class="code" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7">enscrypt_progress_fn</a> cb_ptr, <span class="keywordtype">void</span> *cb_data );</div>
-<div class="line"><span class="keywordtype">int</span> <a class="code" href="enscrypt_8h.html#af9a1fe3d00195f1b5416809d27d05650">enscrypt_ms</a>( uint8_t *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *passwd, <span class="keyword">const</span> uint8_t *salt, <span class="keywordtype">int</span> millis, <span class="keywordtype">int</span> n_factor, <a class="code" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7">enscrypt_progress_fn</a> cb_ptr, <span class="keywordtype">void</span> *cb_data );</div>
+<p>Typically, you'll just need two functions from the library, <a class="el" href="enscrypt_8h.html#a8e23247fa73442afe960fdd6c58e5e1f" title="Iteration based enscrypt. ">enscrypt()</a> and <a class="el" href="enscrypt_8h.html#a6e3cdd51b7f003fc11cde8dc65c4c016" title="Time based enscrypt. ">enscrypt_ms()</a>. They look like this:</p>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> <a class="code" href="enscrypt_8h.html#a8e23247fa73442afe960fdd6c58e5e1f">enscrypt</a>(uint8_t *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *passwd, <span class="keywordtype">size_t</span> passwd_len, <span class="keyword">const</span> uint8_t *salt, <span class="keywordtype">size_t</span> salt_len, <span class="keywordtype">int</span> iterations, <span class="keywordtype">int</span> n_factor, <a class="code" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7">enscrypt_progress_fn</a> cb_ptr, <span class="keywordtype">void</span> *cb_data );</div>
+<div class="line"><span class="keywordtype">int</span> <a class="code" href="enscrypt_8h.html#a6e3cdd51b7f003fc11cde8dc65c4c016">enscrypt_ms</a>( uint8_t *buf, <span class="keyword">const</span> <span class="keywordtype">char</span> *passwd, <span class="keywordtype">size_t</span> passwd_len, <span class="keyword">const</span> uint8_t *salt, <span class="keywordtype">size_t</span> salt_len, <span class="keywordtype">int</span> millis, <span class="keywordtype">int</span> n_factor, <a class="code" href="enscrypt_8h.html#a28875ea4518fc366395495224205cea7">enscrypt_progress_fn</a> cb_ptr, <span class="keywordtype">void</span> *cb_data );</div>
 </div><!-- fragment --><p>To run 100 iterations: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="enscrypt_8h.html">enscrypt.h</a>&gt;</span></div>
 <div class="line"></div>
 <div class="line"><span class="keywordtype">int</span> main()</div>
@@ -154,7 +154,7 @@ Basic Use</h2>
 <div class="line">  uint8_t buf[32];</div>
 <div class="line">  uint8_t salt[32] = {0};</div>
 <div class="line">  </div>
-<div class="line">  time_elapsed = <a class="code" href="enscrypt_8h.html#a0d414c1fd33c885508ee7e05ad6e8118">enscrypt</a>( buf, <span class="stringliteral">&quot;password&quot;</span>, salt, 100, 9, NULL, NULL );</div>
+<div class="line">  time_elapsed = <a class="code" href="enscrypt_8h.html#a8e23247fa73442afe960fdd6c58e5e1f">enscrypt</a>( buf, <span class="stringliteral">&quot;password&quot;</span>, 8, salt, 32, 100, 9, NULL, NULL );</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>Or, to run for 5 seconds: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="enscrypt_8h.html">enscrypt.h</a>&gt;</span></div>
 <div class="line"></div>
@@ -164,7 +164,7 @@ Basic Use</h2>
 <div class="line">  uint8_t buf[32];</div>
 <div class="line">  uint8_t salt[32] = {0};</div>
 <div class="line">  </div>
-<div class="line">  iteration_count = <a class="code" href="enscrypt_8h.html#af9a1fe3d00195f1b5416809d27d05650">enscrypt_ms</a>( buf, <span class="stringliteral">&quot;password&quot;</span>, salt, 5000, 9, NULL, NULL );</div>
+<div class="line">  iteration_count = <a class="code" href="enscrypt_8h.html#a6e3cdd51b7f003fc11cde8dc65c4c016">enscrypt_ms</a>( buf, <span class="stringliteral">&quot;password&quot;</span>, 8, salt, 32, 5000, 9, NULL, NULL );</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>To use a callback function to monitor progress: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="enscrypt_8h.html">enscrypt.h</a>&gt;</span></div>
 <div class="line"></div>
@@ -178,7 +178,7 @@ Basic Use</h2>
 <div class="line">{</div>
 <div class="line">  uint8_t buf[32];</div>
 <div class="line">  </div>
-<div class="line">  <a class="code" href="enscrypt_8h.html#a0d414c1fd33c885508ee7e05ad6e8118">enscrypt</a>( buf, NULL, NULL, 100, 9, progress_fn, NULL );</div>
+<div class="line">  <a class="code" href="enscrypt_8h.html#a8e23247fa73442afe960fdd6c58e5e1f">enscrypt</a>( buf, NULL, 0, NULL, 0, 100, 9, progress_fn, NULL );</div>
 <div class="line">}</div>
 </div><!-- fragment --><h2><a class="anchor" id="advancedlib"></a>
 Advanced use</h2>
@@ -189,8 +189,8 @@ Advanced use</h2>
 </ul>
 </li>
 <li>Functions:<ul>
-<li><a class="el" href="enscrypt_8h.html#a0d414c1fd33c885508ee7e05ad6e8118" title="Iteration based enscrypt. ">enscrypt()</a> Iteration based EnScrypt</li>
-<li><a class="el" href="enscrypt_8h.html#af9a1fe3d00195f1b5416809d27d05650" title="Time based enscrypt. ">enscrypt_ms()</a> Time based EnScrypt</li>
+<li><a class="el" href="enscrypt_8h.html#a8e23247fa73442afe960fdd6c58e5e1f" title="Iteration based enscrypt. ">enscrypt()</a> Iteration based EnScrypt</li>
+<li><a class="el" href="enscrypt_8h.html#a6e3cdd51b7f003fc11cde8dc65c4c016" title="Time based enscrypt. ">enscrypt_ms()</a> Time based EnScrypt</li>
 <li><a class="el" href="enscrypt_8h.html#ad45d27f5446bc67a038e6a4394562641" title="Get a value representing execution time. ">enscrypt_get_real_time()</a> Get a value representing execution time.</li>
 <li><a class="el" href="enscrypt_8h.html#af1097544078b7561dcf00d975b0ad7cf" title="Set a function to call in the event of an un-recoverable error. ">enscrypt_set_fatal_error()</a> Set a function to call in the event of an un-recoverable error.</li>
 </ul>

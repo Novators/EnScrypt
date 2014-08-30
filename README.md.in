@@ -62,8 +62,8 @@ Documentation is available in the enscrypt.h header, or in HTML in the doc direc
 Typically, you'll just need two functions from the library, enscrypt() and enscrypt_ms().  They look like this:
 
 ```
-int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data );
-int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data );
+int enscrypt(uint8_t *buf, const char *passwd, size_t passwd_len, const uint8_t *salt, size_t salt_len, int iterations, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data );
+int enscrypt_ms( uint8_t *buf, const char *passwd, size_t passwd_len, const uint8_t *salt, size_t salt_len, int millis, int n_factor, enscrypt_progress_fn cb_ptr, void *cb_data );
 ```
 
 To run 100 iterations:
@@ -76,7 +76,7 @@ int main()
   uint8_t buf[32];
   uint8_t salt[32] = {0};
   
-  time_elapsed = enscrypt( buf, "password", salt, 100, 9, NULL, NULL );
+  time_elapsed = enscrypt( buf, "password", 8, salt, 32, 100, 9, NULL, NULL );
 }
 ```
 
@@ -90,7 +90,7 @@ int main()
   uint8_t buf[32];
   uint8_t salt[32] = {0};
   
-  iteration_count = enscrypt_ms( buf, "password", salt, 5000, 9, NULL, NULL );
+  iteration_count = enscrypt_ms( buf, "password", 8, salt, 32, 5000, 9, NULL, NULL );
 }
 ```
 
@@ -107,7 +107,7 @@ int main()
 {
   uint8_t buf[32];
   
-  enscrypt( buf, NULL, NULL, 100, 9, progress_fn, NULL );
+  enscrypt( buf, NULL, 0, NULL, 0, 100, 9, progress_fn, NULL );
 }
 ```
 

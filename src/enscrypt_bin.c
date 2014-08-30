@@ -120,6 +120,7 @@ int main( int argc, char *argv[] )
 	uint8_t result[32];
 	double startTime, endTime, elapsed;
 	int retVal;
+	size_t password_len = 0;
 	
 	for( i = 1; i < argc; i++ ) {
 		j = strlen( argv[i] );
@@ -156,7 +157,8 @@ int main( int argc, char *argv[] )
 			}
 		}
 		if( password ) free( password );
-		password = malloc( strlen( argv[i] ) + 1 );
+		password_len = strlen( argv[i] );
+		password = malloc( password_len + 1 );
 		strcpy( password, argv[i] );
 	}
 
@@ -194,12 +196,12 @@ int main( int argc, char *argv[] )
 
 	startTime = enscrypt_get_real_time();
 	if( iterations ) {
-		retVal = enscrypt( result, password, salt, iterations, N_FACTOR, progress, NULL );
+		retVal = enscrypt( result, password, password_len, salt, 32, iterations, N_FACTOR, progress, NULL );
 	} else if( duration ) {
-		iterations = retVal = enscrypt_ms( result, password, salt, duration * 1000, N_FACTOR, progress, NULL );
+		iterations = retVal = enscrypt_ms( result, password, password_len, salt, 32, duration * 1000, N_FACTOR, progress, NULL );
 	} else {
 		iterations = 1;
-		retVal = enscrypt( result, password, salt, iterations, N_FACTOR, progress, NULL );
+		retVal = enscrypt( result, password, password_len, salt, 32, iterations, N_FACTOR, progress, NULL );
 	}
 	endTime = enscrypt_get_real_time();
 	elapsed = endTime - startTime;

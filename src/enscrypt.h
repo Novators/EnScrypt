@@ -102,15 +102,26 @@ ENSCRYPT_EXPORT double enscrypt_get_real_time();
  * @brief Iteration based enscrypt
  *
  * @param buf A 32 byte buffer to receive the result.
- * @param passwd null-terminated password, or NULL.
- * @param salt 32 byte buffer containing the salt, or NULL.
+ * @param passwd buffer containing password, or NULL.
+ * @param passwd_len length of password.
+ * @param salt buffer containing the salt, or NULL.
+ * @param salt_len length of salt.
  * @param iterations Number of iterations; must be > 0.
  * @param n_factor Scrypt n factor (recommend 9)
  * @param cb_ptr Pointer to an enscrypt_progress_fn, or NULL.
  * @param cb_data Pointer to data to send to callback function.
  * @return Execution time (in milliseconds) or -1 on error.
  **/
-ENSCRYPT_EXPORT int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *salt, int iterations, int n_factor, enscrypt_progress_fn cb_ptr, void* cb_data );
+ENSCRYPT_EXPORT int enscrypt(
+	uint8_t *buf, 
+	const char *passwd,
+	size_t passwd_len, 
+	const uint8_t *salt, 
+	size_t salt_len,
+	int iterations, 
+	int n_factor, 
+	enscrypt_progress_fn cb_ptr, 
+	void* cb_data );
 
 /**
  * @brief Time based enscrypt
@@ -124,7 +135,16 @@ ENSCRYPT_EXPORT int enscrypt(uint8_t *buf, const char *passwd, const uint8_t *sa
  * @param cb_data Pointer to data to send to callback function.
  * @return Number of iterations performed or -1 on error.
  **/
-ENSCRYPT_EXPORT int enscrypt_ms( uint8_t *buf, const char *passwd, const uint8_t *salt, int millis, int n_factor, enscrypt_progress_fn cb_ptr, void* cb_data );
+ENSCRYPT_EXPORT int enscrypt_ms( 
+	uint8_t *buf,
+	const char *passwd,
+	size_t passwd_len,
+	const uint8_t *salt,
+	size_t salt_len,
+	int millis,
+	int n_factor,
+	enscrypt_progress_fn cb_ptr,
+	void* cb_data );
 
 #ifdef __cplusplus
 }
