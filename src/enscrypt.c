@@ -206,7 +206,7 @@ int enscrypt_ms(
 	uint8_t *salt = NULL;
 	
 	double startTime, elapsed = 0.0;
-	int i = 0;
+	int i = 1;
 	int p = 0, lp = -1, go = 1;
 	
 	if( !buf ) return -1;
